@@ -1,3 +1,5 @@
+use crate::players::Character;
+
 #[derive(Hash)]
 enum FeatType {
     Minor,
@@ -24,15 +26,6 @@ const FEATS_XP: FeatsXp = FeatsXp {
     extraordinary: 0.1,
     campaign: 0.15,
 };
-
-struct Character {
-    name: String,
-    class: String,
-    level: u8,
-    current_xp: f32,
-    next_level_xp: f32, // difference between current and next level in xp
-    extra_xp_modifier: f32,
-}
 
 struct Session {
     characters: Vec<Character>,
@@ -101,27 +94,27 @@ mod tests {
         let session = Session {
             characters: vec![
                 Character {
-                    name: "A".to_string(),
-                    class: "Fighter".to_string(),
-                    level: 1,
-                    current_xp: 0.0,
+                    name: "B".to_string(),
                     next_level_xp: 100.0,
-                    extra_xp_modifier: 0.1,
+                    extra_xp_modifier: 0.2,
+                    current_xp: 0.0,
+                    level: 1,
+                    class: "fighter".to_string(),
                 },
                 Character {
                     name: "B".to_string(),
-                    class: "Fighter".to_string(),
-                    level: 1,
-                    current_xp: 0.0,
                     next_level_xp: 100.0,
                     extra_xp_modifier: 0.2,
+                    current_xp: 0.0,
+                    level: 1,
+                    class: "fighter".to_string(),
                 },
                 Character {
                     name: "C".to_string(),
-                    class: "Fighter".to_string(),
-                    level: 1,
-                    current_xp: 0.0,
                     next_level_xp: 100.0,
+                    current_xp: 0.0,
+                    level: 1,
+                    class: "fighter".to_string(),
                     extra_xp_modifier: 0.0,
                 },
             ],
