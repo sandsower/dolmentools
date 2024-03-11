@@ -9,9 +9,9 @@ edition = "2021"
 anyhow = "1.0.79"
 axum = { version = "0.7.4", features = ["http2"] }
 notify = "6.1.1"
+rusqlite = { version = "0.30.0", features = ["bundled"] }
 serde = "1.0.196"
 serde_json = "1.0.113"
-sqlite = "0.33.0"
 tokio = { version = "1.35.1", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }

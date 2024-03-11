@@ -6,8 +6,9 @@ use axum::{
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-mod xp;
-
+mod feats;
+mod players;
+mod session;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -20,7 +21,8 @@ async fn main() -> anyhow::Result<()> {
         .init();
     info!("starting server");
     let router = Router::new()
-        .route("/", get(hello));
+        .route("/", get(health))
+        .nest("/players", players::router());
 
     let port = 8000_u16;
     let addr = std::net::SocketAddr::from(([0, 0, 0, 0], port));
@@ -35,7 +37,7 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn hello() -> &'static str {
-    "Hello, World!"
+async fn health() -> &'static str {
+    "ok"
 }
 

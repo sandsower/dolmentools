@@ -1,41 +1,32 @@
-use crate::players::Character;
+use axum::routing::post;
+use axum::Router;
 
-#[derive(Hash)]
-enum FeatType {
-    Minor,
-    Major,
-    Extraordinary,
-    Campaign,
-}
+use super::players::Character;
+use super::feats::{Feat, FeatType, FEATS_XP};
 
-struct Feat {
-    feat_type: FeatType,
-    desc: String,
-}
-
-struct FeatsXp {
-    minor: f32,
-    major: f32,
-    extraordinary: f32,
-    campaign: f32,
-}
-
-const FEATS_XP: FeatsXp = FeatsXp {
-    minor: 0.02,
-    major: 0.05,
-    extraordinary: 0.1,
-    campaign: 0.15,
-};
-
-struct Session {
+pub struct Session {
     characters: Vec<Character>,
     feats: Vec<Feat>,
     xp: f32,
 }
 
-struct SessionXpForCharacter {
+pub struct SessionXpForCharacter {
     name: String,
     xp: f32,
+}
+
+pub fn router() -> Router {
+    Router::new()
+        .route("/start", post(start_session))
+        .route("/end", post(end_session))
+}
+
+pub async fn start_session() -> &'static str {
+    "start session"
+}
+
+pub async fn end_session() -> &'static str {
+    "end session"
 }
 
 /*
