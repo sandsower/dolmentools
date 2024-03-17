@@ -44,13 +44,18 @@ const feat_mod_major = 0.05
 const feat_mod_extraordinary = 0.1
 const feat_mod_campaign = 0.15
 
-pub fn calculate_xp_for_feat(xp: Float, feat: Feat) {
-  case feat.feat_type {
-    Minor -> xp *. feat_mod_minor
-    Major -> xp *. feat_mod_major
-    Extraordinary -> xp *. feat_mod_extraordinary
-    Campaign -> xp *. feat_mod_campaign
+pub fn calculate_xp_for_feat(session: Session, feat: Feat) -> Session {
+  let xp = case feat.feat_type {
+    Minor -> session.required_xp *. feat_mod_minor
+    Major -> session.required_xp *. feat_mod_major
+    Extraordinary -> session.required_xp *. feat_mod_extraordinary
+    Campaign -> session.required_xp *. feat_mod_campaign
   }
+  Session(
+    characters: session.characters,
+    required_xp: session.required_xp,
+    xp: session.xp +. xp,
+  )
 }
 
 pub fn start_session(characters: List(Character)) -> Session {
@@ -62,13 +67,8 @@ pub fn start_session(characters: List(Character)) -> Session {
   Session(characters: characters, required_xp: required_xp, xp: 0.0)
 }
 
-pub fn feat_acquired(feat: Feat, session: Session) -> Session {
-  let xp = calculate_xp_for_feat(session.required_xp, feat)
-  Session(
-    characters: session.characters,
-    required_xp: session.required_xp,
-    xp: session.xp +. xp,
-  )
+pub fn feat_acquired(session: Session, feat: Feat) -> Session {
+  session |> calculate_xp_for_feat(feat)
 }
 
 pub fn end_session(session: Session) -> SessionReports {
