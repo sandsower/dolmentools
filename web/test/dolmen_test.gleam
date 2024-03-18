@@ -1,6 +1,7 @@
 import gleeunit
 import gleeunit/should
-import session
+import dolmen
+import character
 import gleam/list
 import gleam/result
 import gleam/function
@@ -10,7 +11,8 @@ pub fn main() {
 }
 
 const characters = [
-  session.Character(
+  character.Character(
+    id: 0,
     name: "A",
     class: "Fighter",
     level: 1,
@@ -18,7 +20,8 @@ const characters = [
     next_level_xp: 200.0,
     extra_xp_modifier: 0.1,
   ),
-  session.Character(
+  character.Character(
+    id: 1,
     name: "B",
     class: "Rogue",
     level: 2,
@@ -28,7 +31,8 @@ const characters = [
   ),
 ]
 
-const default_character = session.Character(
+const default_character = character.Character(
+  id: 0,
   name: "A",
   class: "Fighter",
   level: 1,
@@ -39,25 +43,25 @@ const default_character = session.Character(
 
 pub fn calculate_xp_for_feat_test() {
   let feats = [
-    session.Feat(feat_type: session.Minor, description: "Minor feat"),
-    session.Feat(feat_type: session.Major, description: "Major feat"),
-    session.Feat(
-      feat_type: session.Extraordinary,
+    dolmen.Feat(feat_type: dolmen.Minor, description: "Minor feat"),
+    dolmen.Feat(feat_type: dolmen.Major, description: "Major feat"),
+    dolmen.Feat(
+      feat_type: dolmen.Extraordinary,
       description: "Extraordinary feat",
     ),
-    session.Feat(feat_type: session.Campaign, description: "Campaign feat"),
+    dolmen.Feat(feat_type: dolmen.Campaign, description: "Campaign feat"),
   ]
 
   let expected_xp = [2.0, 5.0, 10.0, 15.0]
 
   let session =
-    session.Session(characters: characters, required_xp: 100.0, xp: 0.0)
+    dolmen.Session(characters: characters, required_xp: 100.0, xp: 0.0)
 
   list.index_map(feats, fn(feat, i) {
     session
-    |> session.calculate_xp_for_feat(feat)
+    |> dolmen.calculate_xp_for_feat(feat)
     |> should.equal(
-      session.Session(session.characters, 100.0, {
+      dolmen.Session(session.characters, 100.0, {
         expected_xp
         |> list.at(i)
         |> result.unwrap(0.0)
@@ -67,7 +71,7 @@ pub fn calculate_xp_for_feat_test() {
 }
 
 pub fn start_session_test() {
-  let session = session.start_session(characters)
+  let session = dolmen.start_session(characters)
   session.characters
   |> should.equal(characters)
 
@@ -80,33 +84,33 @@ pub fn start_session_test() {
 
 pub fn feat_acquired_test() {
   let session =
-    session.Session(characters: characters, required_xp: 500.0, xp: 0.0)
+    dolmen.Session(characters: characters, required_xp: 500.0, xp: 0.0)
 
   let minor_feat =
-    session.Feat(feat_type: session.Minor, description: "Minor feat")
+    dolmen.Feat(feat_type: dolmen.Minor, description: "Minor feat")
   let major_feat =
-    session.Feat(feat_type: session.Major, description: "Major feat")
+    dolmen.Feat(feat_type: dolmen.Major, description: "Major feat")
 
   session
-  |> session.feat_acquired(minor_feat)
+  |> dolmen.feat_acquired(minor_feat)
   |> function.tap(fn(session) {
-    should.equal(session, session.Session(characters, 500.0, 10.0))
+    should.equal(session, dolmen.Session(characters, 500.0, 10.0))
   })
-  |> session.feat_acquired(minor_feat)
+  |> dolmen.feat_acquired(minor_feat)
   |> function.tap(fn(session) {
-    should.equal(session, session.Session(characters, 500.0, 20.0))
+    should.equal(session, dolmen.Session(characters, 500.0, 20.0))
   })
-  |> session.feat_acquired(major_feat)
-  |> should.equal(session.Session(characters, 500.0, 45.0))
+  |> dolmen.feat_acquired(major_feat)
+  |> should.equal(dolmen.Session(characters, 500.0, 45.0))
 }
 
 pub fn end_session_test() {
-  let session = session.start_session(characters)
+  let session = dolmen.start_session(characters)
   let minor_feat =
-    session.Feat(feat_type: session.Minor, description: "Minor feat")
+    dolmen.Feat(feat_type: dolmen.Minor, description: "Minor feat")
 
   let expected_reports = [
-    session.Report(
+    dolmen.Report(
       character: characters
         |> list.at(0)
         |> result.unwrap(default_character),
@@ -114,7 +118,7 @@ pub fn end_session_test() {
       total_xp: 122.0,
       level_up: False,
     ),
-    session.Report(
+    dolmen.Report(
       character: characters
         |> list.at(1)
         |> result.unwrap(default_character),
@@ -122,14 +126,14 @@ pub fn end_session_test() {
       total_xp: 124.0,
       level_up: False,
     ),
-  ]
+  ] |> list.reverse()
 
   session
-  |> session.feat_acquired(minor_feat)
-  |> session.feat_acquired(minor_feat)
-  |> session.end_session()
-  |> should.equal(session.SessionReports(
-    session.Session(session.characters, session.required_xp, 20.0),
+  |> dolmen.feat_acquired(minor_feat)
+  |> dolmen.feat_acquired(minor_feat)
+  |> dolmen.end_session()
+  |> should.equal(dolmen.SessionReports(
+    dolmen.Session(session.characters, session.required_xp, 20.0),
     expected_reports,
   ))
 }
