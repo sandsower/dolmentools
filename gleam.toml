@@ -1,0 +1,28 @@
+name = "dolmentools"
+version = "1.0.0"
+
+# Fill out these fields if you intend to generate HTML documentation or publish
+# your project to the Hex package manager.
+#
+# description = ""
+# licences = ["Apache-2.0"]
+# repository = { type = "github", user = "username", repo = "project" }
+# links = [{ title = "Website", href = "https://gleam.run" }]
+#
+# For a full reference of all the available options, you can have a look at
+# https://gleam.run/writing-gleam/gleam-toml/. 
+
+[dependencies]
+gleam_stdlib = "~> 0.34 or ~> 1.0"
+sqlight = "~> 0.9"
+birl = "~> 1.6"
+dot_env = "~> 0.3"
+gleam_erlang = "~> 0.25"
+migrant = "~> 0.2"
+wisp = "~> 0.13"
+mist = "~> 0.17"
+nakai = "~> 0.9"
+gleam_http = "~> 3.6"
+
+[dev-dependencies]
+gleeunit = "~> 1.0"
