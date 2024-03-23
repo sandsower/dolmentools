@@ -16,7 +16,7 @@ pub fn main() {
   wisp.configure_logger()
 
   let db = db.connect()
-  let assert Ok(priv_directory) = wisp.priv_directory("jsorm")
+  let assert Ok(priv_directory) = wisp.priv_directory("dolmentools")
   let assert Ok(_) = migrant.migrate(db, priv_directory <> "/migrations")
 
   let ctx =
