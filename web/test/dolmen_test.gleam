@@ -8,7 +8,6 @@ import gleam/list
 import gleam/result
 import gleam/function
 import sqlight
-import gleam/io
 
 pub fn main() {
   gleeunit.main()
@@ -148,6 +147,7 @@ pub fn end_session_test() {
   let expected_reports =
     [
       dolmen.CharacterReport(
+        id: 0,
         character: characters
           |> list.at(0)
           |> result.unwrap(default_character),
@@ -156,6 +156,7 @@ pub fn end_session_test() {
         level_up: False,
       ),
       dolmen.CharacterReport(
+        id: 0,
         character: characters
           |> list.at(1)
           |> result.unwrap(default_character),
@@ -277,8 +278,96 @@ pub fn remove_character_test() {
 
   session.id
   |> dolmen.fetch(conn)
-  |> io.debug()
+  |> should.equal(Ok(session))
 }
 
 pub fn log_feats_test() {
+  use conn <- sqlight.with_connection(":memory:")
+
+  conn
+  |> dolmen.initialize_db_structure()
+  |> should.equal(True)
+
+  let session =
+    dolmen.start_session()
+    |> dolmen.save_session(conn)
+
+  session.id
+  |> should.not_equal(0)
+
+  let assert Ok(session) =
+    characters
+    |> list.map(fn(character) {
+      let character =
+        character
+        |> character.save_character(conn)
+
+      session
+      |> dolmen.add_character_to_session(character, conn)
+    })
+    |> list.last()
+
+  session.id
+  |> dolmen.fetch(conn)
+  |> should.equal(Ok(session))
+
+  let minor_feat =
+    dolmen.Feat(feat_type: dolmen.Minor, description: "Minor feat")
+
+  session
+  |> dolmen.log_feat(minor_feat, conn)
+  |> should.equal(session)
+
+  session.id
+  |> dolmen.fetch(conn)
+  |> should.equal(Ok(session))
+}
+
+pub fn finalize_session_test() {
+  use conn <- sqlight.with_connection(":memory:")
+
+  conn
+  |> dolmen.initialize_db_structure()
+  |> should.equal(True)
+
+  let session =
+    dolmen.start_session()
+    |> dolmen.save_session(conn)
+
+  session.id
+  |> should.not_equal(0)
+
+  let assert Ok(session) =
+    characters
+    |> list.map(fn(character) {
+      let character =
+        character
+        |> character.save_character(conn)
+
+      session
+      |> dolmen.add_character_to_session(character, conn)
+    })
+    |> list.last()
+
+  session.id
+  |> dolmen.fetch(conn)
+  |> should.equal(Ok(session))
+
+  let minor_feat =
+    dolmen.Feat(feat_type: dolmen.Minor, description: "Minor feat")
+
+  session
+  |> dolmen.log_feat(minor_feat, conn)
+  |> should.equal(session)
+
+  session.id
+  |> dolmen.fetch(conn)
+  |> should.equal(Ok(session))
+
+  session
+  |> dolmen.finalize_session(conn)
+
+  session.id
+  |> dolmen.fetch(conn)
+  |> should.equal(Ok(session))
 }

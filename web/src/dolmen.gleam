@@ -24,6 +24,7 @@ pub type Session {
 
 pub type CharacterReport {
   CharacterReport(
+    id: Int,
     character: character.Character,
     xp_gained: Float,
     total_xp: Float,
@@ -93,6 +94,7 @@ pub fn end_session(session: Session) -> SessionReports {
       let total_xp = xp_gained +. character.current_xp
       SessionReports(0, session: acc.session, reports: [
         CharacterReport(
+          id: 0,
           character: character,
           xp_gained: xp_gained,
           total_xp: total_xp,
@@ -217,7 +219,7 @@ pub fn fetch_all(on conn: sqlight.Connection) -> List(Session) {
   sessions
 }
 
-pub fn log_feat_acquired(
+pub fn log_feat(
   session: Session,
   feat: Feat,
   on conn: sqlight.Connection,
@@ -249,6 +251,20 @@ pub fn fetch_session_feats(
   session: Session,
   on conn: sqlight.Connection,
 ) -> List(Feat) {
+  let assert Ok(feats) =
+    sqlight.query(
+      "
+      SELECT
+        feat_type,
+        description
+      FROM session_feats
+      WHERE session_id = ?
+      ",
+      conn,
+      [sqlight.int(session.id)],
+      feat_decoder(),
+    )
+  feats
 }
 
 pub fn save_character_report(
@@ -256,29 +272,16 @@ pub fn save_character_report(
   session_report_id: Int,
   on conn: sqlight.Connection,
 ) {
-  let assert Ok(Nil) =
-    sqlight.exec(
-      "CREATE TABLE IF NOT EXISTS character_reports (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        session_report_id INTEGER,
-        character_id INTEGER,
-        xp_gained REAL,
-        total_xp REAL,
-        level_up BOOLEAN,
-        created_at TEXT,
-      )",
-      conn,
-    )
-
   let timestamp =
     birl.now()
     |> birl.to_naive()
 
-  let assert Ok([]) =
+  let assert Ok([id]) =
     sqlight.query(
       "
-      INSERT INTO reports (session_report_id, character_id, xp_gained, total_xp, level_up, created_at)
+      INSERT INTO character_reports (session_report_id, character_id, xp_gained, total_xp, level_up, created_at)
       VALUES (?, ?, ?, ?, ?, ?)
+      RETURNING id
       ",
       conn,
       [
@@ -289,39 +292,29 @@ pub fn save_character_report(
         sqlight.bool(report.level_up),
         sqlight.text(timestamp),
       ],
-      dynamic.dynamic,
+      dynamic.element(0, dynamic.int),
     )
+
+  CharacterReport(..report, id: id)
 }
 
 pub fn save_session_report(report: SessionReports, on conn: sqlight.Connection) {
-  let assert Ok(Nil) =
-    sqlight.exec(
-      "CREATE TABLE IF NOT EXISTS session_reports (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        session_id INTEGER,
-        created_at TEXT,
-      )",
-      conn,
-    )
-
   let timestamp =
     birl.now()
     |> birl.to_naive()
 
-  let assert Ok([row]) =
+  let assert Ok([id]) =
     sqlight.query(
-      "
-      INSERT INTO session_reports (session_id, created_at)
+      "INSERT INTO session_reports (session_id, created_at)
       VALUES (?, ?)
       RETURNING id
       ",
       conn,
       [sqlight.int(report.session.id), sqlight.text(timestamp)],
-      dynamic.int,
+      dynamic.element(0, dynamic.int),
     )
 
-  report.reports
-  |> list.map(fn(ch_report) { save_character_report(ch_report, row, conn) })
+  SessionReports(..report, id: id)
 }
 
 /// Auxiliary db functions
@@ -362,8 +355,19 @@ pub fn remove_character_from_session(
   |> save_session(conn)
 }
 
-/// Decoders
+pub fn finalize_session(session: Session, on conn: sqlight.Connection) {
+  let report =
+    session
+    |> end_session
+    |> save_session_report(conn)
 
+  report.reports
+  |> list.map(fn(ch_report) {
+    save_character_report(ch_report, report.id, conn)
+  })
+}
+
+/// Decoders
 pub fn session_decoder() -> dynamic.Decoder(Session) {
   dynamic.decode5(
     Session,
@@ -379,6 +383,24 @@ pub fn session_decoder() -> dynamic.Decoder(Session) {
       }
       |> Ok
     }),
+  )
+}
+
+pub fn feat_decoder() -> dynamic.Decoder(Feat) {
+  dynamic.decode2(
+    Feat,
+    dynamic.element(0, fn(x) -> Result(FeatType, List(dynamic.DecodeError)) {
+      let assert Ok(x) = dynamic.string(x)
+      case x {
+        "Minor" -> Minor
+        "Major" -> Major
+        "Extraordinary" -> Extraordinary
+        "Campaign" -> Campaign
+        _ -> Minor
+      }
+      |> Ok
+    }),
+    dynamic.element(1, dynamic.string),
   )
 }
 
