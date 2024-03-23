@@ -35,7 +35,7 @@ pub fn save_character_test() {
 
   char
   |> character.save_character(on: conn)
-  |> should.equal(Nil)
+  |> should.equal(char)
 }
 
 pub fn load_all_characters_test() {
@@ -46,7 +46,7 @@ pub fn load_all_characters_test() {
     char
     |> character.save_character(on: conn)
   })
-  |> should.equal([Nil, Nil])
+  |> should.equal(characters)
 
   conn
   |> character.load_all_characters()

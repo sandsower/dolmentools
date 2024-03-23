@@ -30,10 +30,12 @@ pub fn save_character(character: Character, on conn: sqlight.Connection) {
     )
 
   // Insert the character into the database
-  let assert Ok(_) =
+  let assert Ok([id]) =
     sqlight.query(
       "INSERT INTO characters (name, class, level, current_xp, next_level_xp, extra_xp_modifier)
-    VALUES (?, ?, ?, ?, ?, ?)",
+    VALUES (?, ?, ?, ?, ?, ?)
+    RETURNING id
+    ",
       on: conn,
       with: [
         sqlight.text(character.name),
@@ -43,10 +45,10 @@ pub fn save_character(character: Character, on conn: sqlight.Connection) {
         sqlight.float(character.next_level_xp),
         sqlight.float(character.extra_xp_modifier),
       ],
-      expecting: db_decoder(),
+      expecting: dynamic.element(0, dynamic.int),
     )
 
-  Nil
+  Character(..character, id: id)
 }
 
 pub fn load_all_characters(on conn: sqlight.Connection) -> List(Character) {
@@ -55,13 +57,31 @@ pub fn load_all_characters(on conn: sqlight.Connection) -> List(Character) {
       "SELECT id, name, class, level, current_xp, next_level_xp, extra_xp_modifier FROM characters",
       on: conn,
       with: [],
-      expecting: db_decoder(),
+      expecting: character_db_decoder(),
     )
 
   res
 }
 
-fn db_decoder() -> dynamic.Decoder(Character) {
+todo "This is the function I need to call to fetch the characters for a session"
+pub fn fetch_characters_for_session(
+  session_id: Int,
+  on conn: sqlight.Connection,
+) -> List(Character) {
+  let assert Ok(res) =
+    sqlight.query(
+      "SELECT characters.id, characters.name, characters.class, characters.level, characters.current_xp, characters.next_level_xp, characters.extra_xp_modifier
+    FROM characters
+    JOIN session_characters ON characters.id = session_characters.character_id
+    WHERE session_characters.session_id = ?",
+      on: conn,
+      with: [sqlight.int(session_id)],
+      expecting: character_db_decoder(),
+    )
+  res
+}
+
+pub fn characer_db_decoder() -> dynamic.Decoder(Character) {
   dynamic.decode7(
     Character,
     dynamic.element(0, dynamic.int),

@@ -15,6 +15,7 @@ version = "1.0.0"
 [dependencies]
 gleam_stdlib = "~> 0.34 or ~> 1.0"
 sqlight = "~> 0.9"
+birl = "~> 1.6"
 
 [dev-dependencies]
 gleeunit = "~> 1.0"
