@@ -1,15 +1,17 @@
 import gleeunit
 import gleeunit/should
 import sqlight
-import character
+import models.{Character}
+import db
 import gleam/list
+
 
 pub fn main() {
   gleeunit.main()
 }
 
 const characters = [
-  character.Character(
+  Character(
     id: 1,
     name: "A",
     class: "Fighter",
@@ -18,7 +20,7 @@ const characters = [
     next_level_xp: 200.0,
     extra_xp_modifier: 0.1,
   ),
-  character.Character(
+  Character(
     id: 2,
     name: "B",
     class: "Rogue",
@@ -34,7 +36,7 @@ pub fn save_character_test() {
   let assert Ok(char) = list.at(characters, 0)
 
   char
-  |> character.save_character(on: conn)
+  |> db.save_character(on: conn)
   |> should.equal(char)
 }
 
@@ -44,11 +46,11 @@ pub fn load_all_characters_test() {
   characters
   |> list.map(fn(char) {
     char
-    |> character.save_character(on: conn)
+    |> db.save_character(on: conn)
   })
   |> should.equal(characters)
 
   conn
-  |> character.load_all_characters()
+  |> db.load_all_characters()
   |> should.equal(characters)
 }
