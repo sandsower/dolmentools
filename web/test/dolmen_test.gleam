@@ -230,7 +230,7 @@ pub fn add_character_test() {
 
   session.id
   |> dolmen.fetch(conn)
-  |> should.equal(session)
+  |> should.equal(Ok(session))
 }
 
 pub fn remove_character_test() {
@@ -261,7 +261,7 @@ pub fn remove_character_test() {
 
   session.id
   |> dolmen.fetch(conn)
-  |> should.equal(session)
+  |> should.equal(Ok(session))
 
   let assert Ok(session) =
     characters

@@ -1,7 +1,7 @@
 //// Database functions
 
 import gleam/list
-import gleam/dynamic.{type Decoder}
+import gleam/dynamic
 import character.{type Character}
 import sqlight
 import birl
@@ -163,33 +163,44 @@ pub fn save_session(session: Session, on conn: sqlight.Connection) {
   session
 }
 
-pub fn fetch(session_id: Int, on conn: sqlight.Connection) -> Session {
-  let assert Ok([row]) =
+pub fn fetch(
+  session_id: Int,
+  on conn: sqlight.Connection,
+) -> Result(Session, Nil) {
+  let assert Ok(session) =
     sqlight.query(
       "
       SELECT
         id,
         required_xp,
-        xp
+        xp,
+        is_active
       FROM sessions
-      WHERE id = ?
+      WHERE id = ? LIMIT 1
       ",
       conn,
       [sqlight.int(session_id)],
-      dynamic.tuple3(dynamic.int, dynamic.float, dynamic.float),
+      session_decoder(),
     )
 
-  Session(
-    id: row.0,
-    required_xp: row.1,
-    xp: row.2,
-    characters: character.fetch_characters_for_session(session_id, conn),
-    status: Active,
-  )
+  let session =
+    session
+    |> list.first()
+
+  case session {
+    Ok(s) ->
+      Session(
+        ..s,
+        characters: character.fetch_characters_for_session(s.id, conn),
+      )
+    _ ->
+      Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: Closed)
+  }
+  |> Ok
 }
 
 pub fn fetch_all(on conn: sqlight.Connection) -> List(Session) {
-  let assert Ok(rows) =
+  let assert Ok(sessions) =
     sqlight.query(
       "
       SELECT
@@ -201,17 +212,9 @@ pub fn fetch_all(on conn: sqlight.Connection) -> List(Session) {
       ",
       conn,
       [],
-      dynamic.tuple4(dynamic.int, dynamic.float, dynamic.float, dynamic.int),
+      session_decoder(),
     )
-
-  list.map(rows, fn(row) {
-    Session(id: row.0, required_xp: row.1, xp: row.2, characters: [], status: case
-      row.3
-    {
-      1 -> Active
-      _ -> Closed
-    })
-  })
+  sessions
 }
 
 pub fn log_feat_acquired(
@@ -246,7 +249,6 @@ pub fn fetch_session_feats(
   session: Session,
   on conn: sqlight.Connection,
 ) -> List(Feat) {
-  todo
 }
 
 pub fn save_character_report(
@@ -361,16 +363,27 @@ pub fn remove_character_from_session(
 }
 
 /// Decoders
-pub fn decode_session() -> Session {
+
+pub fn session_decoder() -> dynamic.Decoder(Session) {
   dynamic.decode5(
     Session,
     dynamic.element(0, dynamic.int),
-    todo "Parse characters",
-    dynamic.element(2, dynamic.int),
-    dynamic.element(3, dynamic.int),
-    case dynamic.element(4, dynamic.int) {
-      1 -> Active
-      _ -> Closed
-    },
+    dynamic.element(0, default_character_decoder),
+    dynamic.element(1, dynamic.float),
+    dynamic.element(2, dynamic.float),
+    dynamic.element(3, fn(x) -> Result(SessionStatus, List(dynamic.DecodeError)) {
+      let assert Ok(x) = dynamic.int(x)
+      case x {
+        1 -> Active
+        _ -> Closed
+      }
+      |> Ok
+    }),
   )
+}
+
+fn default_character_decoder(
+  _d: dynamic.Dynamic,
+) -> Result(List(Character), List(dynamic.DecodeError)) {
+  Ok([])
 }

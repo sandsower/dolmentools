@@ -63,7 +63,6 @@ pub fn load_all_characters(on conn: sqlight.Connection) -> List(Character) {
   res
 }
 
-todo "This is the function I need to call to fetch the characters for a session"
 pub fn fetch_characters_for_session(
   session_id: Int,
   on conn: sqlight.Connection,
@@ -81,7 +80,7 @@ pub fn fetch_characters_for_session(
   res
 }
 
-pub fn characer_db_decoder() -> dynamic.Decoder(Character) {
+pub fn character_db_decoder() -> dynamic.Decoder(Character) {
   dynamic.decode7(
     Character,
     dynamic.element(0, dynamic.int),
