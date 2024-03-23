@@ -1,13 +1,13 @@
-# web
+# api
 
 [![Package Version](https://img.shields.io/hexpm/v/web)](https://hex.pm/packages/web)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/web/)
 
 ```sh
-gleam add web
+gleam add api
 ```
 ```gleam
-import web
+import api
 
 pub fn main() {
   // TODO: An example of the project in use
