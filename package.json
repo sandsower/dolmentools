@@ -1,0 +1,25 @@
+{
+  "name": "dolmentools",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "concurrently -n server,typescript,tailwind \"pnpm watch:server\" \"pnpm watch:ts\" \"pnpm watch:tw\"",
+    "watch:server": "watchexec -r -e toml,gleam gleam run",
+    "watch:tw": "tailwindcss -i ./priv/static/sources/css/main.css -o ./priv/static/dist/css/styles.css --watch",
+    "watch:ts": "tsc -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "concurrently": "^8.2.2",
+    "eslint": "latest",
+    "tailwindcss": "^3.3.3",
+    "typescript-eslint": "^7.3.1"
+  },
+  "dependencies": {
+    "typescript": "^5.4.3"
+  }
+}
