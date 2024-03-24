@@ -6,3 +6,4 @@ erl_crash.dump
 *.db
 *.sqlite*
 .yarn/
+node_modules/

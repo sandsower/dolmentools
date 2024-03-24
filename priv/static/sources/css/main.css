@@ -1,0 +1,142 @@
+@import url("https://fonts.cdnfonts.com/css/jetbrains-mono-2");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+html,
+body {
+	font-family: "JetBrains Mono", sans-serif;
+	@apply bg-stone-900 text-stone-100 text-sm;
+}
+
+a,
+button,
+input {
+	@apply transition-all duration-200 ease-in-out;
+}
+
+a {
+	@apply outline-none focus:outline focus:outline-yellow-400;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+button {
+	@apply outline-none focus:outline focus:outline-yellow-400 rounded-md;
+}
+
+::selection {
+	@apply bg-stone-700;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: #1c1917;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #44403c;
+	border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: #fbbf24;
+}
+
+::-webkit-scrollbar-thumb:active,
+::-webkit-scrollbar-thumb:focus {
+	background-color: #fbbf24;
+}
+
+.child {
+	@apply ml-4;
+}
+
+.text-true {
+	@apply text-green-400;
+}
+.text-false {
+	@apply text-red-400;
+}
+
+.command-palette {
+	transform: translate(-50%, -50%);
+	@apply w-[90%] md:w-[550px] lg:w-[650px] 2xl:w-[700px] h-[60vh] md:h-[375px] 2xl:h-[400px] min-h-[225px] fixed top-[50%] left-[50%] bg-stone-900 bg-opacity-60 backdrop-blur-xl text-stone-100 border border-stone-800 rounded-lg shadow-xl z-[999999] overflow-hidden;
+}
+
+.command-palette.command-palette-opened {
+	@apply flex flex-col;
+}
+
+.command-palette-item {
+	@apply duration-100 ease-in-out;
+}
+
+.command-palette-item {
+	@apply w-full text-left px-5 py-3 space-y-1.5 hover:bg-stone-800/40 border-b border-b-stone-800 outline-none cursor-pointer rounded-none;
+}
+
+.command-palette-item:last-child {
+	@apply border-none;
+}
+
+.command-palette-item:focus {
+	@apply bg-yellow-400 border-none text-stone-900 outline-none;
+}
+
+.sidebar {
+	@apply h-screen md:h-full whitespace-nowrap overflow-hidden bg-stone-900 md:bg-stone-950 border-r border-r-stone-800 md:border-0 transition-all;
+}
+
+.sidebar-opened {
+	@apply w-2/3 sm:w-2/5 md:w-80 border-0 px-4 py-3 overflow-y-auto;
+}
+
+.sidebar-closed {
+	@apply w-0;
+}
+
+.slide-up {
+	animation: slide-up 0.2s ease-in-out;
+}
+
+.slide-down {
+	animation: slide-down 0.2s ease-in-out;
+}
+
+@keyframes slide-up {
+	0% {
+		transform: translateY(24px);
+		opacity: 0;
+		display: none;
+	}
+	100% {
+		transform: translateY(0px);
+		opacity: 1;
+		display: block;
+	}
+}
+
+@keyframes slide-down {
+	0% {
+		opacity: 1;
+		display: block;
+	}
+	100% {
+		transform: translateY(24px);
+		opacity: 0;
+		display: none;
+	}
+}
