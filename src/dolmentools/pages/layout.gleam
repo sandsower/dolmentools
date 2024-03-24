@@ -1,7 +1,6 @@
 import nakai/html
 import nakai/html/attrs
 import dolmentools/components/tabler
-import dolmentools/components/link
 import dolmentools/web.{type Context}
 import wisp
 
@@ -10,10 +9,6 @@ pub type Props {
 }
 
 const description = "Dolmentools - a tool to help you manage your dolmenwood campaign."
-
-const meta_image = "/assets/images/meta.png"
-
-const website_url = "https://jsorm.wyte.space"
 
 pub fn header(title: String) -> html.Node(t) {
   html.Head([
@@ -27,12 +22,6 @@ pub fn header(title: String) -> html.Node(t) {
     // OG tags
     html.meta([attrs.property("og:title"), attrs.content(title)]),
     html.meta([attrs.property("og:description"), attrs.content(description)]),
-    html.meta([
-      attrs.property("og:image"),
-      attrs.type_("image/x-icon"),
-      attrs.content(meta_image),
-    ]),
-    html.meta([attrs.property("og:url"), attrs.content(website_url)]),
     html.meta([attrs.property("og:type"), attrs.content("website")]),
     html.meta([
       attrs.property("twitter:card"),
@@ -40,15 +29,9 @@ pub fn header(title: String) -> html.Node(t) {
     ]),
     html.meta([attrs.property("twitter:creator"), attrs.content("@trulyao")]),
     html.meta([
-      attrs.property("twitter:title"),
-      attrs.content("Jsorm by Wytespace"),
-    ]),
-    html.meta([
       attrs.property("twitter:description"),
       attrs.content(description),
     ]),
-    html.meta([attrs.property("twitter:image"), attrs.content(meta_image)]),
-    html.meta([attrs.property("twitter:url"), attrs.content(website_url)]),
     // styles and scripts
     html.link([
       attrs.rel("stylesheet"),
@@ -81,7 +64,7 @@ fn nav() -> html.Node(t) {
   html.nav(
     [
       attrs.class(
-        "w-full fixed top-0 left-0 right-0 bg-stone-900/70 backdrop-blur-lg flex justify-between items-center border-b border-b-stone-800 py-4 lg:py-5 px-5 lg:px-8",
+        "w-full fixed top-0 left-0 right-0 bg-stone-900/70 backdrop-blur-lg flex justify-between items-center border-b border-b-stone-800 py-4 lg:py-5 px-5 lg:px-8 z-10",
       ),
     ],
     [
@@ -90,7 +73,7 @@ fn nav() -> html.Node(t) {
           attrs.class("text-yellow-400 font-bold text-xl px-2 py-1"),
           attrs.href("/"),
         ],
-        "jsorm",
+        "Dolmentools",
       ),
       html.div([attrs.class("flex items-center")], [
         html.a(
@@ -105,21 +88,9 @@ fn nav() -> html.Node(t) {
   )
 }
 
-pub fn footer() -> html.Node(t) {
-  html.footer([attrs.class("w-full")], [
-    html.div([attrs.class("text-center text-xs py-8")], [
-      html.Text("Built by "),
-      link.component(
-        "Ayodeji",
-        link.Props(href: "https://trulyao.dev", new_tab: True),
-      ),
-    ]),
-  ])
-}
-
 pub fn render(child: html.Node(t), props: Props) -> html.Node(t) {
   let title = case props.title {
-    "" -> "Jsorm"
+    "" -> "Dolmentools"
     title -> title
   }
 
@@ -129,6 +100,5 @@ pub fn render(child: html.Node(t), props: Props) -> html.Node(t) {
       [attrs.class("mt-[9vh]"), attrs.Attr("hx-ext", "response-targets")],
       [nav(), child],
     ),
-    footer(),
   ])
 }

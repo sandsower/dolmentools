@@ -1,5 +1,7 @@
 import gleam/bool
 import dolmentools/web/home
+import dolmentools/web/characters
+import dolmentools/web/session
 import dolmentools/web.{ type Context, render }
 import dolmentools/pages
 import wisp.{type Request, type Response}
@@ -13,6 +15,8 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
 
   case wisp.path_segments(req) {
     [] -> home.render_index(req, ctx)
+    ["characters"] -> characters.render_characters(req, ctx)
+    ["session"] -> session.render_session(req, ctx)
     _ -> wisp.not_found()
   }
 }

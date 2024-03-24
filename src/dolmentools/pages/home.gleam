@@ -6,7 +6,7 @@ pub fn page() -> html.Node(t) {
   div(
     [
       class(
-        "w-full lg:min-h-[80vh] container mx-auto lg:grid lg:grid-cols-2 lg:items-center lg:gap-6 px-7 lg:px-2 lg:mt-0",
+        "w-full lg:min-h-[80vh] container mx-16 lg:grid lg:grid-cols-2 lg:items-center lg:gap-6 px-3 lg:px-2 lg:mt-0",
       ),
     ],
     [
@@ -17,18 +17,28 @@ pub fn page() -> html.Node(t) {
               "text-center lg:text-left text-5xl lg:text-7xl font-black leading-tight max-w-2xl mx-auto lg:mx-0",
             ),
           ],
-          "A minimal JSON explorer",
+          "Welcome to Dolmenwood",
         ),
         button.component(button.Props(
-          text: "Launch",
+          text: "Start session",
           render_as: button.Link,
           variant: button.Primary,
-          attrs: [attrs.href("/editor")],
-          class: "block w-max mx-auto lg:mx-0 mt-6 lg:mt-8",
+          attrs: [attrs.href("/session")],
+          class: "block w-max lg:mx-0 mt-6 lg:mt-8",
+        )),
+        button.component(button.Props(
+          text: "Manage characters",
+          render_as: button.Link,
+          variant: button.Primary,
+          attrs: [attrs.href("/characters")],
+          class: "block w-max lg:mx-0 mt-3 lg:mt-8",
         )),
       ]),
-      div([class("mt-10 mb-16 lg:my-0 rounded-lg overflow-hidden")], [
-        img([attrs.src("/assets/images/mockup.png")]),
+      img([
+        class(
+          "fixed h-auto w-auto max-h-full max-w-full right-0 z-0",
+        ),
+        attrs.src("/assets/images/dw.png"),
       ]),
     ],
   )
