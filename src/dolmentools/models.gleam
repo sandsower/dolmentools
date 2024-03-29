@@ -59,3 +59,15 @@ pub fn feat_to_string(feat: Feat) -> String {
   }
 }
 
+pub fn empty_character() -> Character {
+  Character(
+    id: 0,
+    name: "",
+    class: "",
+    level: 0,
+    current_xp: 0.0,
+    next_level_xp: 0.0,
+    extra_xp_modifier: 0.0,
+  )
+}
+

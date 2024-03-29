@@ -341,6 +341,25 @@ pub fn load_all_characters(
   res
 }
 
+pub fn fetch_character(id: Int, on conn: sqlight.Connection) -> models.Character {
+  let assert Ok(res) =
+    sqlight.query(
+      "
+      SELECT id, name, class, level, current_xp, next_level_xp, extra_xp_modifier FROM characters
+      WHERE id = ? LIMIT 1
+      ",
+      on: conn,
+      with: [sqlight.int(id)],
+      expecting: character_db_decoder(),
+    )
+
+  let assert Ok(char) =
+    res
+    |> list.first()
+
+  char
+}
+
 pub fn inject_characters_to_session(
   session: models.Session,
   on conn: sqlight.Connection,
