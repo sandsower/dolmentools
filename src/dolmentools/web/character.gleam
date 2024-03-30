@@ -46,7 +46,44 @@ pub fn save_character(req: Request, ctx: Context) -> Response {
       case db.save_character(character, ctx.db) {
         n if n.id != 0 ->
           wisp.json_response(
-            json.object([#("ok", json.bool(True)), #("id", json.int(n.id))])
+            json.object([#("id", json.int(n.id))])
+              |> json.to_string_builder,
+            200,
+          )
+        _ ->
+          wisp.json_response(
+            json.object([
+                #("ok", json.bool(False)),
+                #("error", json.string("Failed to save character")),
+              ])
+              |> json.to_string_builder,
+            403,
+          )
+      }
+  }
+}
+
+pub fn delete_character(req: Request, ctx: Context) -> Response {
+  use <- wisp.require_method(req, http.Post)
+  use form <- wisp.require_form(req)
+
+  let chars =
+    form.values
+    |> list.append([#("id", "0")])
+    |> service.parse_character()
+
+  case chars {
+    Error(e) ->
+      wisp.json_response(
+        json.object([#("ok", json.bool(False)), #("error", json.string(e))])
+          |> json.to_string_builder,
+        400,
+      )
+    Ok(character) ->
+      case db.save_character(character, ctx.db) {
+        n if n.id != 0 ->
+          wisp.json_response(
+            json.object([#("id", json.int(n.id))])
               |> json.to_string_builder,
             200,
           )

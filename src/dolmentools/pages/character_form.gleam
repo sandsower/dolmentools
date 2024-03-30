@@ -59,7 +59,10 @@ pub fn page(character: models.Character) -> html.Node(t) {
               text: "Create",
               render_as: button.Link,
               variant: button.Primary,
-              attrs: [attrs.Attr("hx-post", "/create/character")],
+              attrs: [
+                attrs.Attr("hx-post", "/create-character"),
+                attrs.Attr("hx-target", "#characters"),
+              ],
               class: "block w-max lg:mx-0 mt-6 lg:mt-8",
             )),
           ]),

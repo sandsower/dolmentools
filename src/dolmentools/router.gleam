@@ -15,7 +15,6 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
   use <- default_responses(req, ctx)
   use <- wisp.rescue_crashes
   use <- wisp.serve_static(req, under: "/assets", from: ctx.dist_directory)
-
   case wisp.path_segments(req) {
     [] -> home.render_index(req, ctx)
     ["characters"] -> characters.render_characters(req, ctx)
@@ -27,7 +26,11 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
           |> result.unwrap(0),
       )
     ["character"] -> character.render_character_form(req, ctx, 0)
-    ["create", "character"] -> character.save_character(req, ctx)
+    ["create-character"] ->
+      case character.save_character(req, ctx) {
+        r if r.status == 200 -> characters.render_characters(req, ctx)
+        _ -> characters.render_characters(req, ctx)
+      }
     ["session"] -> session.render_session(req, ctx)
     _ -> wisp.not_found()
   }
