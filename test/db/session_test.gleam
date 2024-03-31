@@ -80,7 +80,7 @@ pub fn add_character_test() {
 
   session.id
   |> sessions.fetch_session(conn)
-  |> should.equal(Ok(session))
+  |> should.equal(session)
 }
 
 pub fn remove_character_test() {
@@ -110,7 +110,7 @@ pub fn remove_character_test() {
 
   session.id
   |> sessions.fetch_session(conn)
-  |> should.equal(Ok(session))
+  |> should.equal(session)
 
   let assert Ok(session) =
     characters
@@ -126,7 +126,7 @@ pub fn remove_character_test() {
 
   session.id
   |> sessions.fetch_session(conn)
-  |> should.equal(Ok(session))
+  |> should.equal(session)
 }
 
 pub fn log_feats_test() {
@@ -156,7 +156,7 @@ pub fn log_feats_test() {
 
   session.id
   |> sessions.fetch_session(conn)
-  |> should.equal(Ok(session))
+  |> should.equal(session)
 
   let minor_feat =
     models.Feat(feat_type: models.Minor, description: "Minor feat")
@@ -167,7 +167,7 @@ pub fn log_feats_test() {
 
   session.id
   |> sessions.fetch_session(conn)
-  |> should.equal(Ok(session))
+  |> should.equal(session)
 }
 
 pub fn finalize_session_test() {
@@ -197,7 +197,7 @@ pub fn finalize_session_test() {
 
   session.id
   |> sessions.fetch_session(conn)
-  |> should.equal(Ok(session))
+  |> should.equal(session)
 
   let minor_feat =
     models.Feat(feat_type: models.Minor, description: "Minor feat")
@@ -208,7 +208,7 @@ pub fn finalize_session_test() {
 
   session.id
   |> sessions.fetch_session(conn)
-  |> should.equal(Ok(session))
+  |> should.equal(session)
 
   session
   |> service.end_session()
@@ -216,5 +216,5 @@ pub fn finalize_session_test() {
 
   session.id
   |> sessions.fetch_session(conn)
-  |> should.equal(Ok(session))
+  |> should.equal(session)
 }

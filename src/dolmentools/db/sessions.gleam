@@ -60,7 +60,7 @@ pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
 pub fn fetch_session(
   session_id: Int,
   on conn: sqlight.Connection,
-) -> Result(models.Session, Nil) {
+) -> models.Session {
   let assert Ok(session) =
     sqlight.query(
       "
@@ -83,7 +83,6 @@ pub fn fetch_session(
 
   session
   |> inject_characters_to_session(conn)
-  |> Ok
 }
 
 pub fn fetch_all_sessions(on conn: sqlight.Connection) -> List(models.Session) {

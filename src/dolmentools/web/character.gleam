@@ -1,15 +1,15 @@
+import dolmentools/db/characters as db
+import dolmentools/models
 import dolmentools/pages
 import dolmentools/pages/layout
+import dolmentools/service
+import dolmentools/web.{type Context}
+import dolmentools/web/characters
 import gleam/http.{Delete, Get, Post}
+import gleam/int
 import gleam/json
 import gleam/list
-import gleam/int
 import gleam/result
-import dolmentools/web.{type Context}
-import dolmentools/models
-import dolmentools/db/characters as db
-import dolmentools/service
-import dolmentools/web/characters
 import wisp.{type Request, type Response}
 
 pub fn handle_request(req: Request, ctx: Context) -> Response {
@@ -32,12 +32,12 @@ pub fn render_character_form(req: Request, ctx: Context) -> Response {
     [_, char_id] ->
       char_id
       |> int.parse
-      |> result.unwrap(0)
-    _ -> 0
+      |> result.unwrap(-1)
+    _ -> -1
   }
 
   let character = case char_id {
-    0 -> models.empty_character()
+    -1 -> models.new_character()
     _ -> db.fetch_character(char_id, ctx.db)
   }
 
@@ -90,11 +90,11 @@ pub fn delete_character(req: Request, ctx: Context) -> Response {
       char_id
       |> int.parse
       |> result.unwrap(0)
-    _ -> 0
+    _ -> -1
   }
 
   case char_id {
-    0 -> wisp.internal_server_error()
+    -1 -> wisp.internal_server_error()
     id -> {
       let _ = db.delete_character(id, ctx.db)
       characters.render_characters(req, ctx)

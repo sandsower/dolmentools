@@ -50,6 +50,7 @@ pub type Feat {
   Feat(feat_type: FeatType, description: String)
 }
 
+/// util functions
 pub fn feat_to_string(feat: Feat) -> String {
   case feat.feat_type {
     Minor -> "Minor"
@@ -59,9 +60,9 @@ pub fn feat_to_string(feat: Feat) -> String {
   }
 }
 
-pub fn empty_character() -> Character {
+pub fn new_character() -> Character {
   Character(
-    id: 0,
+    id: -1,
     name: "",
     class: "",
     level: 0,
@@ -71,3 +72,6 @@ pub fn empty_character() -> Character {
   )
 }
 
+pub fn new_session() -> Session {
+  Session(id: -1, characters: [], required_xp: 0.0, xp: 0.0, status: Active)
+}
