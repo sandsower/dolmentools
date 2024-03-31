@@ -328,14 +328,13 @@ pub fn save_character(character: models.Character, on conn: sqlight.Connection) 
 }
 
 pub fn delete_character(id: Int, on conn: sqlight.Connection) {
-  let assert Ok([id]) =
+  let assert Ok(_) =
     sqlight.query(
       "DELETE FROM characters WHERE id = ?",
       on: conn,
       with: [sqlight.int(id)],
       expecting: dynamic.dynamic,
     )
-  id
 }
 
 pub fn load_all_characters(

@@ -1,6 +1,4 @@
 import gleam/bool
-import gleam/int
-import gleam/result
 import dolmentools/web/home
 import dolmentools/web/characters
 import dolmentools/web/character
@@ -18,14 +16,7 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
   case wisp.path_segments(req) {
     [] -> home.render_index(req, ctx)
     ["characters"] -> characters.render_characters(req, ctx)
-    ["character", id] ->
-      character.render_character_form(
-        req,
-        ctx,
-        int.parse(id)
-          |> result.unwrap(0),
-      )
-    ["character"] -> character.render_character_form(req, ctx, 0)
+    ["character"] | ["character", _] -> character.handle_request(req, ctx)
     ["create-character"] ->
       case character.save_character(req, ctx) {
         r if r.status == 200 -> characters.render_characters(req, ctx)

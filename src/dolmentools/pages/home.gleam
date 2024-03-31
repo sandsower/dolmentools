@@ -20,14 +20,14 @@ pub fn page() -> html.Node(t) {
           "Welcome to Dolmenwood",
         ),
         button.component(button.Props(
-          text: "Start session",
+          content: "Start session",
           render_as: button.Link,
           variant: button.Primary,
           attrs: [attrs.href("/session")],
           class: "block w-max lg:mx-0 mt-6 lg:mt-8",
         )),
         button.component(button.Props(
-          text: "Manage characters",
+          content: "Manage characters",
           render_as: button.Link,
           variant: button.Primary,
           attrs: [attrs.href("/characters")],

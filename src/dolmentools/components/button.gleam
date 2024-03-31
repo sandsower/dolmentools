@@ -9,11 +9,12 @@ pub type Variant {
 pub type As {
   Button
   Link
+  Image
 }
 
 pub type Props(a) {
   Props(
-    text: String,
+    content: String,
     variant: Variant,
     render_as: As,
     class: String,
@@ -22,6 +23,18 @@ pub type Props(a) {
 }
 
 const shared_class = "disabled:opacity-50 disabled:cursor-not-allowed py-2 px-5 select-none"
+
+fn render_as_button(class: String, props: Props(t)) -> html.Node(t) {
+  html.button_text([attrs.class(class), ..props.attrs], props.content)
+}
+
+fn render_as_link(class: String, props: Props(t)) -> html.Node(t) {
+  html.a_text([attrs.class(class), ..props.attrs], props.content)
+}
+
+fn render_as_image(class: String, props: Props(t)) -> html.Node(t) {
+  html.img([attrs.class(class), attrs.src(props.content), ..props.attrs])
+}
 
 pub fn component(props: Props(t)) -> html.Node(t) {
   let class =
@@ -34,10 +47,10 @@ pub fn component(props: Props(t)) -> html.Node(t) {
     <> " "
     <> shared_class
 
-  let el = case props.render_as {
-    Button -> html.button_text
-    Link -> html.a_text
+  { class <> " " <> props.class }
+  |> case props.render_as {
+    Button -> render_as_button(_, props)
+    Link -> render_as_link(_, props)
+    Image -> render_as_image(_, props)
   }
-
-  el([attrs.class(class <> " " <> props.class), ..props.attrs], props.text)
 }

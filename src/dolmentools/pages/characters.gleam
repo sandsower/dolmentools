@@ -49,20 +49,10 @@ pub fn render_characters(chars: List(Character)) -> html.Node(t) {
             [
               div([class("w-full mt-4")], [
                 div([class("flex flex-row")], [
-                  h2_text(
-                    [class("text-2xl font-bold text-center")],
-                    character.name,
-                  ),
-                  label([class("ml-4 font-bold self-end")], [
-                    Text(character.class),
-                  ]),
-                ]),
-                div([class("flex flex-row")], [
-                  p_text([class("text-center")], int.to_string(character.level)),
                   button.component(button.Props(
-                    text: "Delete",
-                    render_as: button.Link,
-                    variant: button.Primary,
+                    content: "/assets/images/skull.svg",
+                    render_as: button.Image,
+                    variant: button.Ghost,
                     attrs: [
                       attrs.Attr("id", "delete"),
                       attrs.Attr(
@@ -70,11 +60,26 @@ pub fn render_characters(chars: List(Character)) -> html.Node(t) {
                         "/character/"
                           |> string.append(int.to_string(character.id)),
                       ),
-                      attrs.Attr("hx-target", "#char-form"),
+                      attrs.Attr("hx-target", "#characters"),
+                      attrs.Attr("hx-swap", "outerHTML"),
                       attrs.Attr("hx-trigger", "click target:#delete"),
                     ],
-                    class: "ml-4",
+                    class: "w-16",
                   )),
+                  h2_text(
+                    [class("text-2xl font-bold text-center")],
+                    character.name,
+                  ),
+                ]),
+                div([class("flex flex-row")], [
+                  label([class("ml-4 font-bold")], [
+                    Text(character.class),
+                  ]),
+                  p_text(
+                    [class("text-center ml-4 font-bold")],
+                    "Lvl "
+                      |> string.append(int.to_string(character.level)),
+                  ),
                 ]),
               ]),
             ],
@@ -83,7 +88,7 @@ pub fn render_characters(chars: List(Character)) -> html.Node(t) {
     }
     |> list.append([
       button.component(button.Props(
-        text: "Create a character",
+        content: "Create a character",
         render_as: button.Link,
         variant: button.Primary,
         attrs: [
