@@ -2,7 +2,7 @@ import gleeunit
 import gleeunit/should
 import sqlight
 import dolmentools/models.{Character}
-import dolmentools/db
+import dolmentools/db/characters
 import gleam/list
 
 pub fn main() {
@@ -35,7 +35,7 @@ pub fn save_character_test() {
   let assert Ok(char) = list.at(characters, 0)
 
   char
-  |> db.save_character(on: conn)
+  |> characters.save_character(on: conn)
   |> should.equal(char)
 }
 
@@ -45,11 +45,11 @@ pub fn load_all_characters_test() {
   characters
   |> list.map(fn(char) {
     char
-    |> db.save_character(on: conn)
+    |> characters.save_character(on: conn)
   })
   |> should.equal(characters)
 
   conn
-  |> db.load_all_characters()
+  |> characters.load_all_characters()
   |> should.equal(characters)
 }

@@ -3,7 +3,6 @@
 import gleam/list
 import gleam/dict
 import gleam/string
-import gleam/function
 import dolmentools/models
 import formal/form
 

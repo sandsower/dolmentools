@@ -7,7 +7,7 @@ import gleam/int
 import gleam/result
 import dolmentools/web.{type Context}
 import dolmentools/models
-import dolmentools/db
+import dolmentools/db/characters as db
 import dolmentools/service
 import dolmentools/web/characters
 import wisp.{type Request, type Response}

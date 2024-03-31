@@ -1,6 +1,8 @@
 //// Dolmen tests
 import gleeunit
 import gleeunit/should
+import dolmentools/db/sessions
+import dolmentools/db/characters
 import dolmentools/db
 import dolmentools/models
 import gleam/list
@@ -42,10 +44,10 @@ pub fn fetch_all_test() {
   let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
 
   session
-  |> db.save_session(conn)
+  |> sessions.save_session(conn)
 
   // fetch all doesn't return characters so we need to bypass them in the check
-  db.fetch_all_sessions(conn)
+  sessions.fetch_all_sessions(conn)
   |> should.equal([
     models.Session(1, [], session.required_xp, session.xp, session.status),
   ])
@@ -59,7 +61,7 @@ pub fn add_character_test() {
   |> should.equal(True)
 
   let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
-    |> db.save_session(conn)
+    |> sessions.save_session(conn)
 
   session.id
   |> should.not_equal(0)
@@ -69,15 +71,15 @@ pub fn add_character_test() {
     |> list.map(fn(character) {
       let character =
         character
-        |> db.save_character(conn)
+        |> characters.save_character(conn)
 
       session
-      |> db.add_character_to_session(character, conn)
+      |> sessions.add_character_to_session(character, conn)
     })
     |> list.last()
 
   session.id
-  |> db.fetch_session(conn)
+  |> sessions.fetch_session(conn)
   |> should.equal(Ok(session))
 }
 
@@ -89,7 +91,7 @@ pub fn remove_character_test() {
   |> should.equal(True)
 
   let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
-    |> db.save_session(conn)
+    |> sessions.save_session(conn)
 
   session.id
   |> should.not_equal(0)
@@ -99,15 +101,15 @@ pub fn remove_character_test() {
     |> list.map(fn(character) {
       let character =
         character
-        |> db.save_character(conn)
+        |> characters.save_character(conn)
 
       session
-      |> db.add_character_to_session(character, conn)
+      |> sessions.add_character_to_session(character, conn)
     })
     |> list.last()
 
   session.id
-  |> db.fetch_session(conn)
+  |> sessions.fetch_session(conn)
   |> should.equal(Ok(session))
 
   let assert Ok(session) =
@@ -115,15 +117,15 @@ pub fn remove_character_test() {
     |> list.map(fn(character) {
       let character =
         character
-        |> db.save_character(conn)
+        |> characters.save_character(conn)
 
       session
-      |> db.remove_character_from_session(character, conn)
+      |> sessions.remove_character_from_session(character, conn)
     })
     |> list.last()
 
   session.id
-  |> db.fetch_session(conn)
+  |> sessions.fetch_session(conn)
   |> should.equal(Ok(session))
 }
 
@@ -135,7 +137,7 @@ pub fn log_feats_test() {
   |> should.equal(True)
 
   let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
-    |> db.save_session(conn)
+    |> sessions.save_session(conn)
 
   session.id
   |> should.not_equal(0)
@@ -145,26 +147,26 @@ pub fn log_feats_test() {
     |> list.map(fn(character) {
       let character =
         character
-        |> db.save_character(conn)
+        |> characters.save_character(conn)
 
       session
-      |> db.add_character_to_session(character, conn)
+      |> sessions.add_character_to_session(character, conn)
     })
     |> list.last()
 
   session.id
-  |> db.fetch_session(conn)
+  |> sessions.fetch_session(conn)
   |> should.equal(Ok(session))
 
   let minor_feat =
     models.Feat(feat_type: models.Minor, description: "Minor feat")
 
   session
-  |> db.log_feat(minor_feat, conn)
+  |> sessions.log_feat(minor_feat, conn)
   |> should.equal(session)
 
   session.id
-  |> db.fetch_session(conn)
+  |> sessions.fetch_session(conn)
   |> should.equal(Ok(session))
 }
 
@@ -176,7 +178,7 @@ pub fn finalize_session_test() {
   |> should.equal(True)
 
   let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
-    |> db.save_session(conn)
+    |> sessions.save_session(conn)
 
   session.id
   |> should.not_equal(0)
@@ -186,33 +188,33 @@ pub fn finalize_session_test() {
     |> list.map(fn(character) {
       let character =
         character
-        |> db.save_character(conn)
+        |> characters.save_character(conn)
 
       session
-      |> db.add_character_to_session(character, conn)
+      |> sessions.add_character_to_session(character, conn)
     })
     |> list.last()
 
   session.id
-  |> db.fetch_session(conn)
+  |> sessions.fetch_session(conn)
   |> should.equal(Ok(session))
 
   let minor_feat =
     models.Feat(feat_type: models.Minor, description: "Minor feat")
 
   session
-  |> db.log_feat(minor_feat, conn)
+  |> sessions.log_feat(minor_feat, conn)
   |> should.equal(session)
 
   session.id
-  |> db.fetch_session(conn)
+  |> sessions.fetch_session(conn)
   |> should.equal(Ok(session))
 
   session
   |> service.end_session()
-  |> db.finalize_session(conn)
+  |> sessions.finalize_session(conn)
 
   session.id
-  |> db.fetch_session(conn)
+  |> sessions.fetch_session(conn)
   |> should.equal(Ok(session))
 }
