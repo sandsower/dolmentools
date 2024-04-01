@@ -9,7 +9,8 @@ pub const error = error.page
 
 pub const home = home.page
 
-pub const session = session.page
+pub const session = session.index
+pub const session_chars = session.refresh_characters
 
 pub const characters = characters.page
 

@@ -42,7 +42,7 @@ pub fn main() {
 }
 
 pub fn start_session_test() {
-  let session = service.start_session()
+  let session = models.new_session()
 
   session.required_xp
   |> should.equal(0.0)
@@ -125,7 +125,7 @@ pub fn calculate_xp_for_feat_test() {
 }
 
 pub fn end_session_test() {
-  let session = service.start_session()
+  let session = models.new_session()
 
   let session =
     models.Session(

@@ -32,16 +32,6 @@ pub fn calculate_xp_for_feat(
   )
 }
 
-pub fn start_session() -> models.Session {
-  models.Session(
-    id: 0,
-    characters: [],
-    required_xp: 0.0,
-    xp: 0.0,
-    status: models.Active,
-  )
-}
-
 pub fn feat_acquired(
   session: models.Session,
   feat: models.Feat,

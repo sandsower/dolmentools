@@ -1,13 +1,14 @@
 //// Dolmen tests
+
+import dolmentools/db
+import dolmentools/db/characters
+import dolmentools/db/sessions
+import dolmentools/models
+import dolmentools/service
+import gleam/list
 import gleeunit
 import gleeunit/should
-import dolmentools/db/sessions
-import dolmentools/db/characters
-import dolmentools/db
-import dolmentools/models
-import gleam/list
 import sqlight
-import dolmentools/service
 
 pub fn main() {
   gleeunit.main()
@@ -41,7 +42,14 @@ pub fn fetch_all_test() {
   |> db.initialize_db_structure()
   |> should.equal(True)
 
-  let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
+  let session =
+    models.Session(
+      id: 0,
+      characters: [],
+      required_xp: 0.0,
+      xp: 0.0,
+      status: models.Active,
+    )
 
   session
   |> sessions.save_session(conn)
@@ -60,7 +68,14 @@ pub fn add_character_test() {
   |> db.initialize_db_structure()
   |> should.equal(True)
 
-  let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
+  let session =
+    models.Session(
+      id: 0,
+      characters: [],
+      required_xp: 0.0,
+      xp: 0.0,
+      status: models.Active,
+    )
     |> sessions.save_session(conn)
 
   session.id
@@ -78,8 +93,7 @@ pub fn add_character_test() {
     })
     |> list.last()
 
-  session.id
-  |> sessions.fetch_session(conn)
+  sessions.fetch_active_session(conn)
   |> should.equal(session)
 }
 
@@ -90,7 +104,14 @@ pub fn remove_character_test() {
   |> db.initialize_db_structure()
   |> should.equal(True)
 
-  let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
+  let session =
+    models.Session(
+      id: 0,
+      characters: [],
+      required_xp: 0.0,
+      xp: 0.0,
+      status: models.Active,
+    )
     |> sessions.save_session(conn)
 
   session.id
@@ -108,8 +129,7 @@ pub fn remove_character_test() {
     })
     |> list.last()
 
-  session.id
-  |> sessions.fetch_session(conn)
+  sessions.fetch_active_session(conn)
   |> should.equal(session)
 
   let assert Ok(session) =
@@ -124,8 +144,7 @@ pub fn remove_character_test() {
     })
     |> list.last()
 
-  session.id
-  |> sessions.fetch_session(conn)
+  sessions.fetch_active_session(conn)
   |> should.equal(session)
 }
 
@@ -136,7 +155,14 @@ pub fn log_feats_test() {
   |> db.initialize_db_structure()
   |> should.equal(True)
 
-  let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
+  let session =
+    models.Session(
+      id: 0,
+      characters: [],
+      required_xp: 0.0,
+      xp: 0.0,
+      status: models.Active,
+    )
     |> sessions.save_session(conn)
 
   session.id
@@ -154,8 +180,7 @@ pub fn log_feats_test() {
     })
     |> list.last()
 
-  session.id
-  |> sessions.fetch_session(conn)
+  sessions.fetch_active_session(conn)
   |> should.equal(session)
 
   let minor_feat =
@@ -165,8 +190,7 @@ pub fn log_feats_test() {
   |> sessions.log_feat(minor_feat, conn)
   |> should.equal(session)
 
-  session.id
-  |> sessions.fetch_session(conn)
+  sessions.fetch_active_session(conn)
   |> should.equal(session)
 }
 
@@ -177,7 +201,14 @@ pub fn finalize_session_test() {
   |> db.initialize_db_structure()
   |> should.equal(True)
 
-  let session = models.Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: models.Active)
+  let session =
+    models.Session(
+      id: 0,
+      characters: [],
+      required_xp: 0.0,
+      xp: 0.0,
+      status: models.Active,
+    )
     |> sessions.save_session(conn)
 
   session.id
@@ -195,8 +226,7 @@ pub fn finalize_session_test() {
     })
     |> list.last()
 
-  session.id
-  |> sessions.fetch_session(conn)
+  sessions.fetch_active_session(conn)
   |> should.equal(session)
 
   let minor_feat =
@@ -206,15 +236,13 @@ pub fn finalize_session_test() {
   |> sessions.log_feat(minor_feat, conn)
   |> should.equal(session)
 
-  session.id
-  |> sessions.fetch_session(conn)
+  sessions.fetch_active_session(conn)
   |> should.equal(session)
 
   session
   |> service.end_session()
   |> sessions.finalize_session(conn)
 
-  session.id
-  |> sessions.fetch_session(conn)
+  sessions.fetch_active_session(conn)
   |> should.equal(session)
 }

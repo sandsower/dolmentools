@@ -72,6 +72,7 @@ fn nav() -> html.Node(t) {
         [
           attrs.class("text-yellow-400 font-bold text-xl px-2 py-1"),
           attrs.href("/"),
+          attrs.Attr("hx-boost", "true"),
         ],
         "Dolmentools",
       ),

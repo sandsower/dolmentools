@@ -1,10 +1,12 @@
-import dolmentools/models.{Session, Feat}
+import birl
 import dolmentools/db/characters
 import dolmentools/db/reports
-import sqlight
+import dolmentools/models.{Feat, Session}
 import gleam/dynamic
+import gleam/io
+import gleam/function
 import gleam/list
-import birl
+import sqlight
 
 ///  Session functions
 pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
@@ -40,6 +42,7 @@ pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
   let assert True =
     session.characters
     |> list.map(fn(character) {
+      io.debug("Saving character " <> character.name)
       let assert Ok([]) =
         sqlight.query(
           "
@@ -54,13 +57,12 @@ pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
     })
     |> list.all(fn(x) { x == Ok([]) })
 
+  io.debug("Session saved")
+
   session
 }
 
-pub fn fetch_session(
-  session_id: Int,
-  on conn: sqlight.Connection,
-) -> models.Session {
+pub fn fetch_active_session(on conn: sqlight.Connection) -> models.Session {
   let assert Ok(session) =
     sqlight.query(
       "
@@ -70,19 +72,25 @@ pub fn fetch_session(
         xp,
         is_active
       FROM sessions
-      WHERE id = ? LIMIT 1
+      WHERE is_active = 1
+      LIMIT 1
       ",
       conn,
-      [sqlight.int(session_id)],
+      [],
       session_decoder(),
     )
 
-  let assert Ok(session) =
-    session
-    |> list.first()
-
-  session
-  |> inject_characters_to_session(conn)
+  case
+    {
+      session
+      |> list.first()
+    }
+  {
+    Ok(session) ->
+      session
+      |> inject_characters_to_session(conn)
+    Error(Nil) -> models.new_session()
+  }
 }
 
 pub fn fetch_all_sessions(on conn: sqlight.Connection) -> List(models.Session) {
@@ -183,6 +191,8 @@ pub fn add_character_to_session(
   character: models.Character,
   on conn: sqlight.Connection,
 ) -> models.Session {
+  io.debug("Adding character to session")
+  
   let characters =
     session.characters
     |> list.append([character])
@@ -271,4 +281,3 @@ pub fn feat_decoder() -> dynamic.Decoder(models.Feat) {
     dynamic.element(1, dynamic.string),
   )
 }
-
