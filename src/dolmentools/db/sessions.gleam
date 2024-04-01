@@ -3,29 +3,19 @@ import dolmentools/db/characters
 import dolmentools/db/reports
 import dolmentools/models.{Feat, Session}
 import gleam/dynamic
-import gleam/io
 import gleam/function
+import gleam/io
 import gleam/list
 import sqlight
 
-///  Session functions
-pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
-  let timestamp =
-    birl.now()
-    |> birl.to_naive()
-
-  // upsert session
+fn save_new_session(session: models.Session, timestamp: String, on conn: sqlight.Connection) {
   let assert Ok([id]) =
     sqlight.query(
       "
-        INSERT INTO sessions (required_xp, xp, created_at, updated_at)
-        VALUES (?, ?, ?, ?)
-        ON CONFLICT DO UPDATE SET
-          required_xp = excluded.required_xp,
-          xp = excluded.xp,
-          updated_at = excluded.updated_at
-        RETURNING id
-        ",
+      INSERT INTO sessions (required_xp, xp, created_at, updated_at)
+      VALUES (?, ?, ?, ?)
+      RETURNING id
+      ",
       conn,
       [
         sqlight.float(session.required_xp),
@@ -35,8 +25,40 @@ pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
       ],
       dynamic.element(0, dynamic.int),
     )
+  Session(..session, id: id)
+}
 
-  let session = Session(..session, id: id)
+fn save_existing_session(session: models.Session, timestamp: String, on conn: sqlight.Connection) {
+  let assert Ok([]) =
+    sqlight.query(
+      "
+      UPDATE sessions
+      SET required_xp = ?, xp = ?, updated_at = ?
+      WHERE id = ?
+      ",
+      conn,
+      [
+        sqlight.float(session.required_xp),
+        sqlight.float(session.xp),
+        sqlight.text(timestamp),
+        sqlight.int(session.id),
+      ],
+      dynamic.dynamic,
+    )
+    session
+}
+
+///  Session functions
+pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
+  let timestamp =
+    birl.now()
+    |> birl.to_naive()
+
+  let session = case session.id {
+    -1 ->
+      save_new_session(session, timestamp, conn)
+    _ -> save_existing_session(session, timestamp, conn)
+  }
 
   // upsert session_characters
   let assert True =
@@ -89,7 +111,9 @@ pub fn fetch_active_session(on conn: sqlight.Connection) -> models.Session {
     Ok(session) ->
       session
       |> inject_characters_to_session(conn)
-    Error(Nil) -> models.new_session()
+    Error(Nil) ->
+      models.new_session()
+      |> save_session(conn)
   }
 }
 
@@ -192,7 +216,7 @@ pub fn add_character_to_session(
   on conn: sqlight.Connection,
 ) -> models.Session {
   io.debug("Adding character to session")
-  
+
   let characters =
     session.characters
     |> list.append([character])

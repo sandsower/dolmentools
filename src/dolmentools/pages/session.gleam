@@ -67,8 +67,6 @@ fn character_button(
       attrs.Attr(
         hx_method,
         "/session/"
-          <> int.to_string(session.id)
-          <> "/"
           <> int.to_string(character.id),
       ),
       attrs.Attr("hx-target", "#characters"),

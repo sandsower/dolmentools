@@ -21,26 +21,7 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
 }
 
 pub fn render_session(req: Request, ctx: Context) -> Response {
-  let id = case
-    {
-      req
-      |> wisp.path_segments()
-    }
-  {
-    [_, id] ->
-      id
-      |> int.parse
-      |> result.unwrap(-1)
-    _ -> -1
-  }
-
-  let session = case id {
-    -1 ->
-      models.new_session()
-      |> sessions.save_session(ctx.db)
-    _ -> sessions.fetch_active_session(ctx.db)
-  }
-
+  let session = sessions.fetch_active_session(ctx.db)
   let characters = characters.load_all_characters(ctx.db)
 
   session.characters
@@ -54,46 +35,39 @@ pub fn render_session(req: Request, ctx: Context) -> Response {
 pub fn add_character(req: Request, ctx: Context) -> Response {
   use <- wisp.require_method(req, Put)
 
-  let ids = case
+  case
     {
       req
       |> wisp.path_segments()
     }
   {
-    [_, session_id, char_id] -> #(
-      session_id
+    [_, char_id] -> {
+      let char_id =
+        char_id
         |> int.parse
-        |> result.unwrap(-1),
-      char_id
-        |> int.parse
-        |> result.unwrap(-1),
-    )
-    _ -> #(-1, -1)
-  }
+        |> result.unwrap(-1)
+      let session = sessions.fetch_active_session(ctx.db)
+      let characters = characters.load_all_characters(ctx.db)
 
-  let session = sessions.fetch_active_session(ctx.db)
-  let characters = characters.load_all_characters(ctx.db)
+      let character =
+        characters
+        |> list.find(fn(chr) { char_id == chr.id })
+        |> result.unwrap(models.new_character())
 
-  let character =
-    characters
-    |> list.find(fn(chr) { pair.second(ids) == chr.id })
-    |> result.unwrap(models.new_character())
+      io.debug(
+        "Adding character "
+        <> int.to_string(char_id)
+        <> " to session "
+        <> int.to_string(session.id),
+      )
 
-  session
-  |> sessions.add_character_to_session(character, ctx.db)
+      session
+      |> sessions.add_character_to_session(character, ctx.db)
 
-  io.debug(
-    "Adding character "
-    <> int.to_string(pair.first(ids))
-    <> " to session "
-    <> int.to_string(pair.second(ids)),
-  )
-
-  case ids {
-    #(-1, -1) -> wisp.internal_server_error()
-    _ ->
       pages.session(session, characters)
       |> layout.render(layout.Props(title: "Session", ctx: ctx, req: req))
       |> web.render(200)
+    }
+    _ -> wisp.internal_server_error()
   }
 }

@@ -17,7 +17,7 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
     [] -> home.render_index(req, ctx)
     ["characters"] -> characters.render_characters(req, ctx)
     ["character"] | ["character", _] -> character.handle_request(req, ctx)
-    ["session"] | ["session", _, _] -> session.handle_request(req, ctx)
+    ["session"] | ["session", _] -> session.handle_request(req, ctx)
     _ -> wisp.not_found()
   }
 }
