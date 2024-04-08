@@ -8,7 +8,6 @@ import gleam/http.{Get, Put}
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/pair
 import gleam/result
 import wisp.{type Request, type Response}
 

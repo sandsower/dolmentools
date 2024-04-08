@@ -1,9 +1,9 @@
 import dolmentools/components/button
+import dolmentools/components/character_card.{type Variant}
 import dolmentools/models
 import dolmentools/pages/characters
 import gleam/int
 import gleam/list
-import gleam/option.{None}
 import nakai/html.{button, div}
 import nakai/html/attrs.{class, id}
 
@@ -18,62 +18,29 @@ pub fn index(
       ),
     ],
     [
-      div([id("characters")], [
-        session
-        |> refresh_characters(characters),
-      ]),
+      div(
+        [id("characters")],
+        characters
+          |> list.map(fn(char) {
+            session
+            |> refresh_character(char)
+          }),
+      ),
       div([], []),
     ],
   )
 }
 
-pub fn refresh_characters(
-  session: models.Session,
-  characters: List(models.Character),
-) -> html.Node(t) {
-  characters.render_characters(
-    characters,
-    character_button(session, _, find_character_in_session),
-    None,
-  )
-}
-
-fn character_button(
+pub fn refresh_character(
   session: models.Session,
   character: models.Character,
-  in_session_fn: fn(models.Character, models.Session) -> Bool,
 ) -> html.Node(t) {
-  let in_session = in_session_fn(character, session)
-
-  let hx_method = case in_session {
-    True -> "hx-delete"
-    False -> "hx-put"
-  }
-
-  let id = case in_session {
-    True -> "delete-" <> int.to_string(character.id)
-    False -> "add-" <> int.to_string(character.id)
-  }
-
-  button.component(button.Props(
-    content: case in_session {
-      False -> "Add"
-      True -> "Remove"
-    },
-    render_as: button.Button,
-    variant: button.Ghost,
-    attrs: [
-      attrs.Attr("id", id),
-      attrs.Attr(
-        hx_method,
-        "/session/"
-          <> int.to_string(character.id),
-      ),
-      attrs.Attr("hx-target", "#characters"),
-      attrs.Attr("hx-swap", "outerHTML"),
-    ],
-    class: "w-16",
-  ))
+  character_card.component(
+    character_card.Props(
+      variant: character_card.Session(character, session, find_character_in_session),
+      attrs: [],
+    ),
+  )
 }
 
 fn find_character_in_session(

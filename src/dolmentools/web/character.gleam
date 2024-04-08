@@ -1,15 +1,16 @@
+import dolmentools/components/character_card
 import dolmentools/db/characters as db
 import dolmentools/models
 import dolmentools/pages
 import dolmentools/pages/layout
 import dolmentools/service
 import dolmentools/web.{type Context}
-import dolmentools/web/characters
 import gleam/http.{Delete, Get, Post}
 import gleam/int
 import gleam/json
 import gleam/list
 import gleam/result
+import nakai/html.{div}
 import wisp.{type Request, type Response}
 
 pub fn handle_request(req: Request, ctx: Context) -> Response {
@@ -50,12 +51,12 @@ pub fn save_character(req: Request, ctx: Context) -> Response {
   use <- wisp.require_method(req, http.Post)
   use form <- wisp.require_form(req)
 
-  let chars =
+  let char =
     form.values
     |> list.append([#("id", "0")])
     |> service.parse_character()
 
-  case chars {
+  case char {
     Error(e) ->
       wisp.json_response(
         json.object([#("ok", json.bool(False)), #("error", json.string(e))])
@@ -64,7 +65,13 @@ pub fn save_character(req: Request, ctx: Context) -> Response {
       )
     Ok(character) ->
       case db.save_character(character, ctx.db) {
-        n if n.id != 0 -> characters.render_characters(req, ctx)
+        n if n.id != 0 -> {
+          character_card.component(
+            character_card.Props(variant: character_card.Manager(n), attrs: []),
+          )
+          |> web.render(200)
+          |> wisp.set_header("HX-Trigger", "refresh-characters") 
+        }
         _ ->
           wisp.json_response(
             json.object([
@@ -97,7 +104,8 @@ pub fn delete_character(req: Request, ctx: Context) -> Response {
     -1 -> wisp.internal_server_error()
     id -> {
       let _ = db.delete_character(id, ctx.db)
-      characters.render_characters(req, ctx)
+      div([], [])
+      |> web.render(200)
     }
   }
 }
