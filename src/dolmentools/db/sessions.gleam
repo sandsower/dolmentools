@@ -3,12 +3,16 @@ import dolmentools/db/characters
 import dolmentools/db/reports
 import dolmentools/models.{Feat, Session}
 import gleam/dynamic
-import gleam/function
+import gleam/int
 import gleam/io
 import gleam/list
 import sqlight
 
-fn save_new_session(session: models.Session, timestamp: String, on conn: sqlight.Connection) {
+fn save_new_session(
+  session: models.Session,
+  timestamp: String,
+  on conn: sqlight.Connection,
+) {
   let assert Ok([id]) =
     sqlight.query(
       "
@@ -28,7 +32,11 @@ fn save_new_session(session: models.Session, timestamp: String, on conn: sqlight
   Session(..session, id: id)
 }
 
-fn save_existing_session(session: models.Session, timestamp: String, on conn: sqlight.Connection) {
+fn save_existing_session(
+  session: models.Session,
+  timestamp: String,
+  on conn: sqlight.Connection,
+) {
   let assert Ok([]) =
     sqlight.query(
       "
@@ -45,7 +53,7 @@ fn save_existing_session(session: models.Session, timestamp: String, on conn: sq
       ],
       dynamic.dynamic,
     )
-    session
+  session
 }
 
 ///  Session functions
@@ -55,9 +63,18 @@ pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
     |> birl.to_naive()
 
   let session = case session.id {
-    -1 ->
+    -1 -> {
+      io.debug("Saving new session")
       save_new_session(session, timestamp, conn)
-    _ -> save_existing_session(session, timestamp, conn)
+    }
+    _ -> {
+      io.debug(
+        "Saving existing session with id "
+        <> session.id
+        |> int.to_string,
+      )
+      save_existing_session(session, timestamp, conn)
+    }
   }
 
   // upsert session_characters
@@ -236,9 +253,34 @@ pub fn remove_character_from_session(
   character: models.Character,
   on conn: sqlight.Connection,
 ) -> models.Session {
+  let res =
+    sqlight.query(
+      "
+        DELETE FROM session_characters 
+        WHERE session_id = ? AND character_id = ?
+        ",
+      conn,
+      [sqlight.int(session.id), sqlight.int(character.id)],
+      dynamic.int,
+    )
+
+  case res {
+    Ok(_) -> io.debug("Character removed from session")
+    Error(e) -> io.debug("Failed to remove character from session" <> e.message)
+  }
+
   let characters =
     session.characters
     |> list.filter(fn(c) { c.id != character.id })
+
+  io.debug(
+    "Keepiing"
+    <> characters
+    |> list.length
+    |> int.to_string
+    <> " characters in session",
+  )
+
   Session(
     ..session,
     characters: characters,

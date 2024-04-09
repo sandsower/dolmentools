@@ -1,8 +1,10 @@
+DROP TABLE IF EXISTS session_characters;
+
 CREATE TABLE IF NOT EXISTS session_characters (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
   session_id INTEGER,
   character_id INTEGER,
   PRIMARY KEY (session_id, character_id),
   FOREIGN KEY (session_id) REFERENCES sessions(id),
   FOREIGN KEY (character_id) REFERENCES characters(id)
 )
+

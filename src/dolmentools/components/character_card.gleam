@@ -101,7 +101,12 @@ fn session_button(
   character: Character,
   in_session_fn: fn(Character, Session) -> Bool,
 ) -> html.Node(t) {
-  let in_session = in_session_fn(character, session)
+  let in_session =
+    character
+    |> in_session_fn(session)
+  let char_id_str =
+    character.id
+    |> int.to_string
 
   let hx_method = case in_session {
     True -> "hx-delete"
@@ -109,8 +114,8 @@ fn session_button(
   }
 
   let id = case in_session {
-    True -> "delete-" <> int.to_string(character.id)
-    False -> "add-" <> int.to_string(character.id)
+    True -> "delete-" <> char_id_str
+    False -> "add-" <> char_id_str
   }
 
   button.component(button.Props(
@@ -122,8 +127,8 @@ fn session_button(
     variant: button.Ghost,
     attrs: [
       attrs.Attr("id", id),
-      attrs.Attr(hx_method, "/session/" <> int.to_string(character.id)),
-      attrs.Attr("hx-target", "#characters"),
+      attrs.Attr(hx_method, "/session/" <> char_id_str),
+      attrs.Attr("hx-target", "#char-" <> char_id_str),
       attrs.Attr("hx-swap", "outerHTML"),
     ],
     class: "w-16",

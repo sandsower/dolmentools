@@ -1,10 +1,7 @@
-import dolmentools/components/button
-import dolmentools/components/character_card.{type Variant}
+import dolmentools/components/character_card
 import dolmentools/models
-import dolmentools/pages/characters
-import gleam/int
 import gleam/list
-import nakai/html.{button, div}
+import nakai/html.{div}
 import nakai/html/attrs.{class, id}
 
 pub fn index(
