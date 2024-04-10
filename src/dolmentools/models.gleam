@@ -52,11 +52,26 @@ pub type Feat {
 
 /// util functions
 pub fn feat_to_string(feat: Feat) -> String {
-  case feat.feat_type {
+  feat.feat_type
+  |> feat_type_to_string
+}
+
+pub fn feat_type_to_string(feat_type: FeatType) -> String {
+  case feat_type {
     Minor -> "Minor"
     Major -> "Major"
     Extraordinary -> "Extraordinary"
     Campaign -> "Campaign"
+  }
+}
+
+pub fn string_to_feat_type(feat_type: String) -> Result(FeatType, String) {
+  case feat_type {
+    "major" -> Ok(Major)
+    "extraordinary" -> Ok(Extraordinary)
+    "campaign" -> Ok(Campaign)
+    "minor" -> Ok(Minor)
+    _ -> Error("Invalid feat type")
   }
 }
 

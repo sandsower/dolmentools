@@ -274,7 +274,7 @@ pub fn remove_character_from_session(
     |> list.filter(fn(c) { c.id != character.id })
 
   io.debug(
-    "Keepiing"
+    "Keeping"
     <> characters
     |> list.length
     |> int.to_string

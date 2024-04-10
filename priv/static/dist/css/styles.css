@@ -620,6 +620,18 @@ video {
   margin: 0px;
 }
 
+.m-4{
+  margin: 1rem;
+}
+
+.m-2{
+  margin: 0.5rem;
+}
+
+.m-3{
+  margin: 0.75rem;
+}
+
 .mx-16{
   margin-left: 4rem;
   margin-right: 4rem;
@@ -670,6 +682,26 @@ video {
   margin-top: 9vh;
 }
 
+.mr-4{
+  margin-right: 1rem;
+}
+
+.mr-5{
+  margin-right: 1.25rem;
+}
+
+.mb-1{
+  margin-bottom: 0.25rem;
+}
+
+.mb-0{
+  margin-bottom: 0px;
+}
+
+.mt-1{
+  margin-top: 0.25rem;
+}
+
 .block{
   display: block;
 }
@@ -692,6 +724,34 @@ video {
 
 .h-auto{
   height: auto;
+}
+
+.h-4{
+  height: 1rem;
+}
+
+.h-5{
+  height: 1.25rem;
+}
+
+.h-12{
+  height: 3rem;
+}
+
+.h-10{
+  height: 2.5rem;
+}
+
+.h-\[36px\]{
+  height: 36px;
+}
+
+.h-\[40px\]{
+  height: 40px;
+}
+
+.h-1\/2{
+  height: 50%;
 }
 
 .max-h-\[80vh\]{
@@ -723,6 +783,18 @@ video {
   width: max-content;
 }
 
+.w-4{
+  width: 1rem;
+}
+
+.w-5{
+  width: 1.25rem;
+}
+
+.w-24{
+  width: 6rem;
+}
+
 .min-w-\[100px\]{
   min-width: 100px;
 }
@@ -743,6 +815,18 @@ video {
   max-width: 28rem;
 }
 
+.flex-1{
+  flex: 1 1 0%;
+}
+
+.grow{
+  flex-grow: 1;
+}
+
+.grow-0{
+  flex-grow: 0;
+}
+
 .cursor-pointer{
   cursor: pointer;
 }
@@ -759,6 +843,10 @@ video {
 
 .flex-col{
   flex-direction: column;
+}
+
+.flex-wrap{
+  flex-wrap: wrap;
 }
 
 .items-end{
@@ -799,6 +887,10 @@ video {
 
 .rounded-md{
   border-radius: 0.375rem;
+}
+
+.rounded-full{
+  border-radius: 9999px;
 }
 
 .border{
@@ -855,6 +947,26 @@ video {
 .bg-yellow-500{
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
+}
+
+.bg-blue-400{
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 165 250 / var(--tw-bg-opacity));
+}
+
+.bg-gray-400{
+  --tw-bg-opacity: 1;
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
+}
+
+.bg-red-400{
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 113 113 / var(--tw-bg-opacity));
+}
+
+.bg-green-400{
+  --tw-bg-opacity: 1;
+  background-color: rgb(74 222 128 / var(--tw-bg-opacity));
 }
 
 .p-2{
@@ -968,6 +1080,10 @@ video {
 
 .font-medium{
   font-weight: 500;
+}
+
+.lowercase{
+  text-transform: lowercase;
 }
 
 .leading-tight{
@@ -1363,8 +1479,22 @@ button:focus{
 }
 
 @media (min-width: 640px){
+  .sm\:w-1\/2{
+    width: 50%;
+  }
+
   .sm\:p-8{
     padding: 2rem;
+  }
+}
+
+@media (min-width: 768px){
+  .md\:m-2{
+    margin: 0.5rem;
+  }
+
+  .md\:w-1\/3{
+    width: 33.333333%;
   }
 }
 
@@ -1392,6 +1522,10 @@ button:focus{
 
   .lg\:min-h-\[80vh\]{
     min-height: 80vh;
+  }
+
+  .lg\:w-1\/4{
+    width: 25%;
   }
 
   .lg\:grid-cols-2{
@@ -1428,6 +1562,12 @@ button:focus{
   .lg\:text-7xl{
     font-size: 4.5rem;
     line-height: 1;
+  }
+}
+
+@media (min-width: 1280px){
+  .xl\:w-1\/5{
+    width: 20%;
   }
 }
 

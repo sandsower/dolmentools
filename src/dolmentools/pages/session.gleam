@@ -1,4 +1,6 @@
 import dolmentools/components/character_card
+import dolmentools/components/session_actions
+import dolmentools/components/session_view
 import dolmentools/models
 import gleam/list
 import nakai/html.{div}
@@ -6,6 +8,7 @@ import nakai/html/attrs.{class, id}
 
 pub fn index(
   session: models.Session,
+  feats: List(models.Feat),
   characters: List(models.Character),
 ) -> html.Node(t) {
   div(
@@ -23,7 +26,9 @@ pub fn index(
             |> refresh_character(char)
           }),
       ),
-      div([], []),
+      session_view.component(session, feats),
+      session_actions.component(),
+      div([id("feat-form")], []),
     ],
   )
 }
@@ -34,10 +39,18 @@ pub fn refresh_character(
 ) -> html.Node(t) {
   character_card.component(
     character_card.Props(
-      variant: character_card.Session(character, session, find_character_in_session),
+      variant: character_card.Session(
+        character,
+        session,
+        find_character_in_session,
+      ),
       attrs: [],
     ),
   )
+}
+
+pub fn refresh_session(session: models.Session, feats: List(models.Feat)) -> html.Node(t) {
+  session_view.component(session, feats)
 }
 
 fn find_character_in_session(

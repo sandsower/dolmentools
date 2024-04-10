@@ -1,14 +1,17 @@
+import dolmentools/components/feat_form
 import dolmentools/db/characters
 import dolmentools/db/sessions
 import dolmentools/models
 import dolmentools/pages
 import dolmentools/pages/layout
 import dolmentools/pages/session
+import dolmentools/service
 import dolmentools/web.{type Context}
-import gleam/http.{Delete, Get, Put}
+import gleam/http.{Delete, Get, Post, Put}
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/result
 import wisp.{type Request, type Response}
 
@@ -21,14 +24,80 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
   }
 }
 
+pub fn handle_feat_request(req: Request, ctx: Context, feat: String) -> Response {
+  case req.method {
+    Get -> render_feat_form(req, ctx, Some(feat))
+    Post -> log_feat(req, ctx, feat)
+    _ -> wisp.not_found()
+  }
+}
+
+pub fn hide_feat_form(req: Request, _ctx: Context) -> Response {
+  use <- wisp.require_method(req, Get)
+
+  feat_form.empty_component()
+  |> web.render(200)
+}
+
+pub fn refresh(req: Request, ctx: Context) -> Response {
+  use <- wisp.require_method(req, Get)
+
+  let session = sessions.fetch_active_session(ctx.db)
+  let feats = sessions.fetch_session_feats(session, ctx.db)
+
+  session
+  |> session.refresh_session(feats)
+  |> web.render(200)
+}
+
+pub fn render_feat_form(
+  _req: Request,
+  _ctx: Context,
+  feat_type: option.Option(String),
+) -> Response {
+  case feat_type {
+    Some(feat_type) ->
+      models.string_to_feat_type(feat_type)
+      |> result.unwrap(models.Minor)
+      |> feat_form.component
+    None -> feat_form.empty_component()
+  }
+  |> web.render(200)
+}
+
+pub fn log_feat(req: Request, ctx: Context, feat_type: String) -> Response {
+  use <- wisp.require_method(req, Post)
+  use form <- wisp.require_form(req)
+
+  let feat =
+    form.values
+    |> list.append([#("feat_type", feat_type)])
+    |> service.parse_feat()
+
+  case feat {
+    Ok(feat) -> {
+      sessions.fetch_active_session(ctx.db)
+      |> sessions.log_feat(feat, ctx.db)
+
+      render_feat_form(req, ctx, None)
+      |> wisp.set_header("HX-Trigger", "refresh")
+    }
+    Error(_) -> {
+      io.debug("Failed to parse feat")
+      wisp.bad_request()
+    }
+  }
+}
+
 pub fn render_session(req: Request, ctx: Context) -> Response {
   let session = sessions.fetch_active_session(ctx.db)
+  let feats = sessions.fetch_session_feats(session, ctx.db)
   let characters = characters.load_all_characters(ctx.db)
 
   session.characters
   |> list.each(fn(chr) { io.debug(chr.name) })
 
-  pages.session(session, characters)
+  pages.session(session, feats, characters)
   |> layout.render(layout.Props(title: "Session", ctx: ctx, req: req))
   |> web.render(200)
 }
@@ -66,6 +135,7 @@ pub fn add_character(req: Request, ctx: Context) -> Response {
       |> sessions.add_character_to_session(character, ctx.db)
       |> session.refresh_character(character)
       |> web.render(200)
+      |> wisp.set_header("HX-Trigger", "refresh")
     }
     _ -> wisp.internal_server_error()
   }
@@ -105,6 +175,7 @@ pub fn remove_character(req: Request, ctx: Context) -> Response {
       |> sessions.remove_character_from_session(character, ctx.db)
       |> session.refresh_character(character)
       |> web.render(200)
+      |> wisp.set_header("HX-Trigger", "refresh")
     }
     _ -> wisp.internal_server_error()
   }
