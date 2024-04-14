@@ -28,6 +28,7 @@ pub fn calculate_xp_for_feat(
           models.Major -> session.required_xp *. feat_mod_major
           models.Extraordinary -> session.required_xp *. feat_mod_extraordinary
           models.Campaign -> session.required_xp *. feat_mod_campaign
+          models.Custom -> feat.xp 
         }
       },
   )
@@ -131,7 +132,7 @@ pub fn parse_feat(
   values: List(#(String, String)),
 ) -> Result(models.Feat, String) {
   let result =
-    form.decoding(function.curry2(models.Feat))
+    form.decoding(function.curry3(models.Feat))
     |> form.with_values(values)
     |> form.field("feat_type", fn(value) { models.string_to_feat_type(value) })
     |> form.field(
@@ -139,12 +140,13 @@ pub fn parse_feat(
       form.string
         |> form.and(form.must_not_be_empty),
     )
+    |> form.field("xp", form.float)
     |> form.finish
 
   case result {
     Ok(data) -> {
       let feat =
-        models.Feat(feat_type: data.feat_type, description: data.description)
+        models.Feat(feat_type: data.feat_type, description: data.description, xp: data.xp)
       Ok(feat)
     }
     Error(form_state) -> {

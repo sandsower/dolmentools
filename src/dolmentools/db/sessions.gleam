@@ -96,13 +96,6 @@ pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
     })
     |> list.all(fn(x) { x == Ok([]) })
 
-  // recalculate and save xp for session based off feats
-  fetch_session_feats(session, conn)
-  |> list.map(fn(feat) {
-    session.xp +. models.feat_to_xp(feat)
-  })
-  
-
   io.debug("Session saved")
 
   session
@@ -179,7 +172,7 @@ pub fn log_feat(
         sqlight.int(session.id),
         sqlight.text(models.feat_to_string(feat)),
         sqlight.text(feat.description),
-        sqlight.float(session.xp),
+        sqlight.float(feat.xp),
         sqlight.text(timestamp),
       ],
       dynamic.dynamic,
@@ -196,7 +189,8 @@ pub fn fetch_session_feats(
       "
       SELECT
         feat_type,
-        description
+        description,
+        xp
       FROM session_feats
       WHERE session_id = ?
       ",
@@ -335,7 +329,7 @@ pub fn session_decoder() -> dynamic.Decoder(models.Session) {
 }
 
 pub fn feat_decoder() -> dynamic.Decoder(models.Feat) {
-  dynamic.decode2(
+  dynamic.decode3(
     Feat,
     dynamic.element(0, fn(x) -> Result(
       models.FeatType,
@@ -347,10 +341,12 @@ pub fn feat_decoder() -> dynamic.Decoder(models.Feat) {
         "Major" -> models.Major
         "Extraordinary" -> models.Extraordinary
         "Campaign" -> models.Campaign
+        "Custom" -> models.Custom
         _ -> models.Minor
       }
       |> Ok
     }),
     dynamic.element(1, dynamic.string),
+    dynamic.element(2, dynamic.float),
   )
 }

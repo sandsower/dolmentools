@@ -1,5 +1,5 @@
 import dolmentools/components/button
-import dolmentools/models.{type FeatType, Campaign, Extraordinary, Major, Minor}
+import dolmentools/models.{type FeatType, Campaign, Extraordinary, Major, Minor, Custom}
 import gleam/list
 import gleam/string
 import nakai/html.{div}
@@ -31,7 +31,7 @@ fn button_for_feat(feat: FeatType) -> html.Node(t) {
 }
 
 pub fn component() -> html.Node(t) {
-  let all_feat_types = [Minor, Major, Extraordinary, Campaign]
+  let all_feat_types = [Minor, Major, Extraordinary, Campaign, Custom]
   div([], [
     div([class("w-full mt-4")], [
       div(

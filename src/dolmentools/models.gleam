@@ -44,10 +44,11 @@ pub type FeatType {
   Major
   Extraordinary
   Campaign
+  Custom
 }
 
 pub type Feat {
-  Feat(feat_type: FeatType, description: String)
+  Feat(feat_type: FeatType, description: String, xp: Float)
 }
 
 /// util functions
@@ -62,6 +63,7 @@ pub fn feat_type_to_string(feat_type: FeatType) -> String {
     Major -> "Major"
     Extraordinary -> "Extraordinary"
     Campaign -> "Campaign"
+    Custom -> "Custom"
   }
 }
 
@@ -71,6 +73,7 @@ pub fn string_to_feat_type(feat_type: String) -> Result(FeatType, String) {
     "extraordinary" -> Ok(Extraordinary)
     "campaign" -> Ok(Campaign)
     "minor" -> Ok(Minor)
+    "custom" -> Ok(Custom)
     _ -> Error("Invalid feat type")
   }
 }

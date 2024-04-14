@@ -1,10 +1,10 @@
-import gleeunit
-import gleeunit/should
+import dolmentools/models
+import dolmentools/service
 import gleam/function
 import gleam/list
 import gleam/result
-import dolmentools/service
-import dolmentools/models
+import gleeunit
+import gleeunit/should
 
 const characters = [
   models.Character(
@@ -62,9 +62,9 @@ pub fn feat_acquired_test() {
     )
 
   let minor_feat =
-    models.Feat(feat_type: models.Minor, description: "Minor feat")
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0)
   let major_feat =
-    models.Feat(feat_type: models.Major, description: "Major feat")
+    models.Feat(feat_type: models.Major, description: "Major feat", xp: 0.0)
 
   session
   |> service.feat_acquired(minor_feat)
@@ -87,13 +87,14 @@ pub fn feat_acquired_test() {
 
 pub fn calculate_xp_for_feat_test() {
   let feats = [
-    models.Feat(feat_type: models.Minor, description: "Minor feat"),
-    models.Feat(feat_type: models.Major, description: "Major feat"),
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0),
+    models.Feat(feat_type: models.Major, description: "Major feat", xp: 0.0),
     models.Feat(
       feat_type: models.Extraordinary,
       description: "Extraordinary feat",
+      xp: 0.0,
     ),
-    models.Feat(feat_type: models.Campaign, description: "Campaign feat"),
+    models.Feat(feat_type: models.Campaign, description: "Campaign feat", xp: 0.0),
   ]
 
   let expected_xp = [2.0, 5.0, 10.0, 15.0]
@@ -139,7 +140,7 @@ pub fn end_session_test() {
     )
 
   let minor_feat =
-    models.Feat(feat_type: models.Minor, description: "Minor feat")
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0)
 
   let expected_reports =
     [
@@ -180,4 +181,3 @@ pub fn end_session_test() {
     expected_reports,
   ))
 }
-

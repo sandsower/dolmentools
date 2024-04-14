@@ -1,8 +1,8 @@
 import dolmentools/components/button
 import dolmentools/components/input
-import dolmentools/models.{type FeatType, Campaign, Extraordinary, Major, Minor}
+import dolmentools/models.{type FeatType, Custom}
 import gleam/string
-import nakai/html.{Text, div, form, label}
+import nakai/html.{div, form}
 import nakai/html/attrs.{class, id}
 
 pub fn component(feat_type: FeatType) -> html.Node(t) {
@@ -27,8 +27,28 @@ pub fn component(feat_type: FeatType) -> html.Node(t) {
               type_: "text",
               required: True,
             )),
+            case feat_type {
+              Custom ->
+                input.component(input.Props(
+                  label: "XP cost",
+                  name: "xp",
+                  default: "",
+                  type_: "number",
+                  required: False,
+                ))
+              _ -> div([], [])
+            },
           ]),
           div([], [
+            button.component(
+              button.Props(
+                content: "Submit",
+                render_as: button.Button,
+                variant: button.Primary,
+                class: "m-4  justify-center h-1/2 w-24 justify-center flex items-center",
+                attrs: [],
+              ),
+            ),
             button.component(
               button.Props(
                 content: "Hide",

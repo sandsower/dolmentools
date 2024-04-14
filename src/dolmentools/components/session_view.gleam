@@ -26,13 +26,6 @@ pub fn component(session: Session, feats: List(models.Feat)) -> html.Node(t) {
               |> float.to_string,
             ),
           ]),
-          label([class("ml-4 font-bold")], [
-            Text("Session XP: "),
-            Text(
-              session.xp
-              |> float.to_string,
-            ),
-          ]),
         ]),
         div(
           [class("flex flex-col")],
@@ -48,6 +41,7 @@ pub fn component(session: Session, feats: List(models.Feat)) -> html.Node(t) {
                         models.Major -> "bg-red-400"
                         models.Extraordinary -> "bg-blue-400"
                         models.Campaign -> "bg-yellow-400"
+                        models.Custom -> "bg-purple-400"
                       },
                     ),
                   ],

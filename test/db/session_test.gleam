@@ -184,7 +184,7 @@ pub fn log_feats_test() {
   |> should.equal(session)
 
   let minor_feat =
-    models.Feat(feat_type: models.Minor, description: "Minor feat")
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0)
 
   session
   |> sessions.log_feat(minor_feat, conn)
@@ -230,7 +230,7 @@ pub fn finalize_session_test() {
   |> should.equal(session)
 
   let minor_feat =
-    models.Feat(feat_type: models.Minor, description: "Minor feat")
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0)
 
   session
   |> sessions.log_feat(minor_feat, conn)
