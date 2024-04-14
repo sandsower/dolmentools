@@ -96,6 +96,13 @@ pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
     })
     |> list.all(fn(x) { x == Ok([]) })
 
+  // recalculate and save xp for session based off feats
+  fetch_session_feats(session, conn)
+  |> list.map(fn(feat) {
+    session.xp +. models.feat_to_xp(feat)
+  })
+  
+
   io.debug("Session saved")
 
   session

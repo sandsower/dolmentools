@@ -39,7 +39,6 @@ pub fn component(session: Session, feats: List(models.Feat)) -> html.Node(t) {
           feats
             |> list.map(fn(feat) {
               div([class("flex flex-row")], [
-                // Create circle with color based on feat type
                 div(
                   [
                     class(

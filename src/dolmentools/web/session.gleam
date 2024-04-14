@@ -78,6 +78,7 @@ pub fn log_feat(req: Request, ctx: Context, feat_type: String) -> Response {
     Ok(feat) -> {
       sessions.fetch_active_session(ctx.db)
       |> sessions.log_feat(feat, ctx.db)
+      |> sessions.save_session(ctx.db)
 
       render_feat_form(req, ctx, None)
       |> wisp.set_header("HX-Trigger", "refresh")
