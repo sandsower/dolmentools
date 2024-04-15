@@ -1,7 +1,7 @@
-import dolmentools/models.{CharacterReport, SessionReports}
-import sqlight
 import birl
+import dolmentools/models.{CharacterReport, SessionReports}
 import gleam/dynamic
+import sqlight
 
 pub fn save_character_report(
   report: models.CharacterReport,
@@ -55,4 +55,3 @@ pub fn save_session_report(
 
   SessionReports(..report, id: id)
 }
-

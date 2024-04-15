@@ -39,6 +39,16 @@ pub fn component() -> html.Node(t) {
         all_feat_types
           |> list.map(button_for_feat),
       ),
+      button.component(button.Props(
+        content: "Finish session",
+        render_as: button.Button,
+        variant: button.Primary,
+        attrs: [
+          attrs.Attr("hx-post", "/session/finish"),
+        ],
+        class: "w-full mt-4 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 md:m-2",
+      )),
+      
     ]),
   ])
 }

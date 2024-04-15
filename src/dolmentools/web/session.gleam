@@ -12,6 +12,7 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/pair
 import gleam/result
 import wisp.{type Request, type Response}
 
@@ -48,6 +49,34 @@ pub fn refresh(req: Request, ctx: Context) -> Response {
   session
   |> session.refresh_session(feats)
   |> web.render(200)
+}
+
+pub fn finish(req: Request, ctx: Context) -> Response {
+  use <- wisp.require_method(req, Post)
+
+  let session = sessions.fetch_active_session(ctx.db)
+  let feats = sessions.fetch_session_feats(session, ctx.db)
+
+  let res =
+    session
+    |> service.end_session(feats)
+
+  // Save the session before finalizing it
+  res
+  |> pair.first
+  |> sessions.save_session(ctx.db)
+
+  // Finalize the session
+  res
+  |> pair.second
+  |> sessions.finalize_session(ctx.db)
+
+  io.debug("Session finished")
+
+  feat_form.empty_component()
+  |> web.render(200)
+  |> wisp.set_header("HX-Trigger", "redirect")
+  |> wisp.set_header("HX-Redirect", "/")
 }
 
 pub fn render_feat_form(

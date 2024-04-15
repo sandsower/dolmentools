@@ -18,6 +18,7 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
     ["characters"] -> characters.render_characters(req, ctx)
     ["character"] | ["character", _] -> character.handle_request(req, ctx)
     ["session", "refresh"] -> session.refresh(req, ctx)
+    ["session", "finish"] -> session.finish(req, ctx)
     ["session", "feat", "hide"] -> session.hide_feat_form(req, ctx)
     ["session", "feat", feat] -> session.handle_feat_request(req, ctx, feat)
     ["session"] | ["session", _] -> session.handle_request(req, ctx)

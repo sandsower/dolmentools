@@ -28,7 +28,7 @@ pub fn calculate_xp_for_feat(
           models.Major -> session.required_xp *. feat_mod_major
           models.Extraordinary -> session.required_xp *. feat_mod_extraordinary
           models.Campaign -> session.required_xp *. feat_mod_campaign
-          models.Custom -> feat.xp 
+          models.Custom -> feat.xp
         }
       },
   )
@@ -42,25 +42,35 @@ pub fn feat_acquired(
   |> calculate_xp_for_feat(feat)
 }
 
-pub fn end_session(session: models.Session) -> models.SessionReports {
+pub fn end_session(
+  session: models.Session,
+  feats: List(models.Feat),
+) -> #(models.Session, models.SessionReports) {
   let session = models.Session(..session, status: models.Closed)
-  list.fold(
-    session.characters,
-    models.SessionReports(0, session, []),
-    fn(acc, character) {
-      let xp_gained = session.xp *. { 1.0 +. character.extra_xp_modifier }
-      let total_xp = xp_gained +. character.current_xp
-      models.SessionReports(0, session: acc.session, reports: [
-        models.CharacterReport(
-          id: 0,
-          character: character,
-          xp_gained: xp_gained,
-          total_xp: total_xp,
-          level_up: total_xp >=. character.next_level_xp,
-        ),
-        ..acc.reports
-      ])
-    },
+
+  let session =
+    list.fold(feats, session, fn(acc, feat) { calculate_xp_for_feat(acc, feat) })
+
+  #(
+    session,
+    list.fold(
+      session.characters,
+      models.SessionReports(0, session, []),
+      fn(acc, character) {
+        let xp_gained = session.xp *. { 1.0 +. character.extra_xp_modifier }
+        let total_xp = xp_gained +. character.current_xp
+        models.SessionReports(0, session: acc.session, reports: [
+          models.CharacterReport(
+            id: 0,
+            character: character,
+            xp_gained: xp_gained,
+            total_xp: total_xp,
+            level_up: total_xp >=. character.next_level_xp,
+          ),
+          ..acc.reports
+        ])
+      },
+    ),
   )
 }
 
@@ -146,7 +156,11 @@ pub fn parse_feat(
   case result {
     Ok(data) -> {
       let feat =
-        models.Feat(feat_type: data.feat_type, description: data.description, xp: data.xp)
+        models.Feat(
+          feat_type: data.feat_type,
+          description: data.description,
+          xp: data.xp,
+        )
       Ok(feat)
     }
     Error(form_state) -> {

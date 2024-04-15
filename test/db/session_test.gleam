@@ -6,6 +6,7 @@ import dolmentools/db/sessions
 import dolmentools/models
 import dolmentools/service
 import gleam/list
+import gleam/pair
 import gleeunit
 import gleeunit/should
 import sqlight
@@ -239,10 +240,21 @@ pub fn finalize_session_test() {
   sessions.fetch_active_session(conn)
   |> should.equal(session)
 
-  session
-  |> service.end_session()
+  let res =
+    session
+    |> service.end_session([])
+
+  let session = models.Session(..session, status: models.Closed)
+
+  res
+  |> pair.first
+  |> sessions.save_session(conn)
+  |> should.equal(session)
+
+  res
+  |> pair.second
   |> sessions.finalize_session(conn)
 
   sessions.fetch_active_session(conn)
-  |> should.equal(session)
+  |> should.equal(models.Session(0, [], 0.0, 0.0, models.Active))
 }

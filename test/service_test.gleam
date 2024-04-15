@@ -2,6 +2,7 @@ import dolmentools/models
 import dolmentools/service
 import gleam/function
 import gleam/list
+import gleam/pair
 import gleam/result
 import gleeunit
 import gleeunit/should
@@ -166,9 +167,8 @@ pub fn end_session_test() {
     |> list.reverse()
 
   session
-  |> service.feat_acquired(minor_feat)
-  |> service.feat_acquired(minor_feat)
-  |> service.end_session()
+  |> service.end_session([minor_feat, minor_feat])
+  |> pair.second
   |> should.equal(models.SessionReports(
     0,
     models.Session(

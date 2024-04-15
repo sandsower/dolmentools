@@ -41,7 +41,7 @@ fn save_existing_session(
     sqlight.query(
       "
       UPDATE sessions
-      SET required_xp = ?, xp = ?, updated_at = ?
+      SET required_xp = ?, xp = ?, updated_at = ?, is_active = ?
       WHERE id = ?
       ",
       conn,
@@ -49,6 +49,10 @@ fn save_existing_session(
         sqlight.float(session.required_xp),
         sqlight.float(session.xp),
         sqlight.text(timestamp),
+        sqlight.int(case session.status {
+          models.Active -> 1
+          models.Closed -> 0
+        }),
         sqlight.int(session.id),
       ],
       dynamic.dynamic,
