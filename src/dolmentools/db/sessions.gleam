@@ -1,6 +1,5 @@
 import birl
 import dolmentools/db/characters
-import dolmentools/db/reports
 import dolmentools/models.{Feat, Session}
 import gleam/dynamic
 import gleam/int
@@ -138,6 +137,37 @@ pub fn fetch_active_session(on conn: sqlight.Connection) -> models.Session {
   }
 }
 
+pub fn fetch_session(session_id: Int, on conn: sqlight.Connection) -> models.Session {
+  let assert Ok(session) =
+    sqlight.query(
+      "
+      SELECT
+        id,
+        required_xp,
+        xp,
+        is_active
+      FROM sessions
+      WHERE id = ?
+      LIMIT 1
+      ",
+      conn,
+      [sqlight.int(session_id)],
+      session_decoder(),
+    )
+
+  case
+    {
+      session
+      |> list.first()
+    }
+  {
+    Ok(session) ->
+      session
+    Error(Nil) ->
+      models.new_session()
+  }
+}
+
 pub fn fetch_all_sessions(on conn: sqlight.Connection) -> List(models.Session) {
   let assert Ok(sessions) =
     sqlight.query(
@@ -153,6 +183,8 @@ pub fn fetch_all_sessions(on conn: sqlight.Connection) -> List(models.Session) {
       [],
       session_decoder(),
     )
+  io.debug("Fetched all sessions")
+  io.debug(sessions)
   sessions
 }
 
@@ -294,20 +326,6 @@ pub fn remove_character_from_session(
     }),
   )
   |> save_session(conn)
-}
-
-pub fn finalize_session(
-  session_reports: models.SessionReports,
-  on conn: sqlight.Connection,
-) {
-  let report =
-    session_reports
-    |> reports.save_session_report(conn)
-
-  report.reports
-  |> list.map(fn(ch_report) {
-    reports.save_character_report(ch_report, report.id, conn)
-  })
 }
 
 /// Decoders

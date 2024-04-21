@@ -4,6 +4,7 @@ import dolmentools/models
 import formal/form
 import gleam/dict
 import gleam/function
+import gleam/io
 import gleam/list
 import gleam/string
 
@@ -45,7 +46,7 @@ pub fn feat_acquired(
 pub fn end_session(
   session: models.Session,
   feats: List(models.Feat),
-) -> #(models.Session, models.SessionReports) {
+) -> #(models.Session, List(models.CharacterReport)) {
   let session = models.Session(..session, status: models.Closed)
 
   let session =
@@ -53,24 +54,19 @@ pub fn end_session(
 
   #(
     session,
-    list.fold(
-      session.characters,
-      models.SessionReports(0, session, []),
-      fn(acc, character) {
-        let xp_gained = session.xp *. { 1.0 +. character.extra_xp_modifier }
-        let total_xp = xp_gained +. character.current_xp
-        models.SessionReports(0, session: acc.session, reports: [
-          models.CharacterReport(
-            id: 0,
-            character: character,
-            xp_gained: xp_gained,
-            total_xp: total_xp,
-            level_up: total_xp >=. character.next_level_xp,
-          ),
-          ..acc.reports
-        ])
-      },
-    ),
+    session.characters 
+    |> list.map(fn(character) {
+      let xp_gained = session.xp *. { 1.0 +. character.extra_xp_modifier }
+      let total_xp = xp_gained +. character.current_xp
+      models.CharacterReport(
+        id: 0,
+        session: session,
+        character: character,
+        xp_gained: xp_gained,
+        total_xp: total_xp,
+        level_up: total_xp >=. character.next_level_xp,
+      )
+    }),
   )
 }
 
@@ -150,8 +146,18 @@ pub fn parse_feat(
       form.string
         |> form.and(form.must_not_be_empty),
     )
-    |> form.field("xp", form.float)
+    |> form.field("xp", fn(value) {
+      case
+        value
+        |> string.is_empty
+      {
+        True -> Ok(0.0)
+        False -> form.float(value)
+      }
+    })
     |> form.finish
+
+  let _ = io.debug(result)
 
   case result {
     Ok(data) -> {

@@ -95,7 +95,11 @@ pub fn calculate_xp_for_feat_test() {
       description: "Extraordinary feat",
       xp: 0.0,
     ),
-    models.Feat(feat_type: models.Campaign, description: "Campaign feat", xp: 0.0),
+    models.Feat(
+      feat_type: models.Campaign,
+      description: "Campaign feat",
+      xp: 0.0,
+    ),
   ]
 
   let expected_xp = [2.0, 5.0, 10.0, 15.0]
@@ -147,6 +151,7 @@ pub fn end_session_test() {
     [
       models.CharacterReport(
         id: 0,
+        session: session,
         character: characters
           |> list.at(0)
           |> result.unwrap(default_character),
@@ -156,6 +161,7 @@ pub fn end_session_test() {
       ),
       models.CharacterReport(
         id: 0,
+        session: session,
         character: characters
           |> list.at(1)
           |> result.unwrap(default_character),
@@ -169,15 +175,5 @@ pub fn end_session_test() {
   session
   |> service.end_session([minor_feat, minor_feat])
   |> pair.second
-  |> should.equal(models.SessionReports(
-    0,
-    models.Session(
-      0,
-      session.characters,
-      session.required_xp,
-      20.0,
-      models.Closed,
-    ),
-    expected_reports,
-  ))
+  |> should.equal(expected_reports)
 }

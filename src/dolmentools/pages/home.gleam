@@ -27,10 +27,10 @@ pub fn page() -> html.Node(t) {
           class: "block w-max lg:mx-0 mt-6 lg:mt-8",
         )),
         button.component(button.Props(
-          content: "Manage past sessions",
+          content: "View reports",
           render_as: button.Link,
           variant: button.Primary,
-          attrs: [attrs.href("/session"), attrs.Attr("hx-boost", "true")],
+          attrs: [attrs.href("/reports"), attrs.Attr("hx-boost", "true")],
           class: "block w-max lg:mx-0 mt-6 lg:mt-8",
         )),
         button.component(button.Props(

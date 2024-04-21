@@ -1,5 +1,4 @@
 CREATE TABLE IF NOT EXISTS session_characters (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
   session_id INTEGER,
   character_id INTEGER,
   PRIMARY KEY (session_id, character_id),

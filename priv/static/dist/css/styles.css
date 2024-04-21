@@ -644,6 +644,11 @@ video {
   margin-right: auto;
 }
 
+.my-2{
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .-ml-1{
   margin-left: -0.25rem;
 }

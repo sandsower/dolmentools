@@ -32,7 +32,7 @@ pub fn component(feat_type: FeatType) -> html.Node(t) {
                 input.component(input.Props(
                   label: "XP cost",
                   name: "xp",
-                  default: "",
+                  default: "0.0",
                   type_: "number",
                   required: False,
                 ))

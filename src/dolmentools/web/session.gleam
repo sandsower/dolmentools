@@ -1,6 +1,7 @@
 import dolmentools/components/feat_form
 import dolmentools/db/characters
 import dolmentools/db/sessions
+import dolmentools/db/reports
 import dolmentools/models
 import dolmentools/pages
 import dolmentools/pages/layout
@@ -69,7 +70,9 @@ pub fn finish(req: Request, ctx: Context) -> Response {
   // Finalize the session
   res
   |> pair.second
-  |> sessions.finalize_session(ctx.db)
+  |> list.map(fn(char_report) { 
+    reports.save_character_report(char_report, session.id, ctx.db)
+  })
 
   io.debug("Session finished")
 

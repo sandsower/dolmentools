@@ -251,10 +251,6 @@ pub fn finalize_session_test() {
   |> sessions.save_session(conn)
   |> should.equal(session)
 
-  res
-  |> pair.second
-  |> sessions.finalize_session(conn)
-
   sessions.fetch_active_session(conn)
   |> should.equal(models.Session(0, [], 0.0, 0.0, models.Active))
 }

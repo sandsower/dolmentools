@@ -28,15 +28,12 @@ pub type Session {
 pub type CharacterReport {
   CharacterReport(
     id: Int,
+    session: Session,
     character: Character,
     xp_gained: Float,
     total_xp: Float,
     level_up: Bool,
   )
-}
-
-pub type SessionReports {
-  SessionReports(id: Int, session: Session, reports: List(CharacterReport))
 }
 
 pub type FeatType {
@@ -92,4 +89,15 @@ pub fn new_character() -> Character {
 
 pub fn new_session() -> Session {
   Session(id: -1, characters: [], required_xp: 0.0, xp: 0.0, status: Active)
+}
+
+pub fn new_character_report() -> CharacterReport {
+  CharacterReport(
+    id: -1,
+    session: new_session(),
+    character: new_character(),
+    xp_gained: 0.0,
+    total_xp: 0.0,
+    level_up: False,
+  )
 }
