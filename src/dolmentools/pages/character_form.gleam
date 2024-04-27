@@ -1,10 +1,11 @@
-import nakai/html.{Text, div, form, input}
-import nakai/html/attrs.{class}
-import dolmentools/models
 import dolmentools/components/button
 import dolmentools/components/input
-import gleam/int
+import dolmentools/models
 import gleam/float
+import gleam/int
+import gleam/list
+import nakai/html.{Text, div, form, input}
+import nakai/html/attrs.{class}
 
 // Form for creating a new character
 pub fn page(character: models.Character) -> html.Node(t) {
@@ -22,10 +23,42 @@ pub fn page(character: models.Character) -> html.Node(t) {
             [
               class("space-y-4"),
               attrs.Attr("hx-post", "/character"),
-              attrs.Attr("hx-target", "#characters"),
-              attrs.Attr("hx-swap", "beforeend"),
+              case character.id {
+                0 -> attrs.Attr("hx-target", "#characters")
+                id ->
+                  attrs.Attr(
+                    "hx-target",
+                    "#char-"
+                      <> id
+                    |> int.to_string,
+                  )
+              },
+              case character.id {
+                0 -> attrs.Attr("hx-swap", "beforeend")
+                _ -> attrs.Attr("hx-swap", "outerHTML")
+              },
+              attrs.Attr(
+                "hx-vals",
+                "{\"id\": \""
+                  <> case character.id {
+                  0 -> 0
+                  _ -> character.id
+                }
+                |> int.to_string
+                  <> "\"}",
+              ),
             ],
             [
+              input([
+                class("hidden"),
+                attrs.Attr("name", "id"),
+                attrs.Attr("value", case character.id {
+                  0 -> "0"
+                  _ ->
+                    character.id
+                    |> int.to_string
+                }),
+              ]),
               input.component(input.Props(
                 label: "Name",
                 name: "name",
@@ -69,12 +102,13 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 required: True,
               )),
               button.component(button.Props(
-                content: "Create",
+                content: case character.id {
+                  0 -> "Create"
+                  _ -> "Update"
+                },
                 render_as: button.Button,
                 variant: button.Primary,
-                attrs: [
-                  attrs.Attr("type", "submit"),
-                ],
+                attrs: [attrs.Attr("type", "submit")],
                 class: "block w-max lg:mx-0 mt-6 lg:mt-8",
               )),
             ],

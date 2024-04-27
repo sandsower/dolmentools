@@ -77,7 +77,7 @@ pub fn string_to_feat_type(feat_type: String) -> Result(FeatType, String) {
 
 pub fn new_character() -> Character {
   Character(
-    id: -1,
+    id: 0,
     name: "",
     class: "",
     level: 0,
@@ -88,12 +88,12 @@ pub fn new_character() -> Character {
 }
 
 pub fn new_session() -> Session {
-  Session(id: -1, characters: [], required_xp: 0.0, xp: 0.0, status: Active)
+  Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: Active)
 }
 
 pub fn new_character_report() -> CharacterReport {
   CharacterReport(
-    id: -1,
+    id: 0,
     session: new_session(),
     character: new_character(),
     xp_gained: 0.0,

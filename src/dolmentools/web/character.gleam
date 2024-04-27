@@ -7,6 +7,7 @@ import dolmentools/service
 import dolmentools/web.{type Context}
 import gleam/http.{Delete, Get, Post}
 import gleam/int
+import gleam/io
 import gleam/json
 import gleam/list
 import gleam/result
@@ -53,8 +54,10 @@ pub fn save_character(req: Request, ctx: Context) -> Response {
 
   let char =
     form.values
-    |> list.append([#("id", "0")])
+    // |> list.append([#("id", "0")])
     |> service.parse_character()
+
+  io.debug(char)
 
   case char {
     Error(e) ->

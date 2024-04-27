@@ -42,6 +42,27 @@ pub fn save_character(character: models.Character, on conn: sqlight.Connection) 
   models.Character(..character, id: id)
 }
 
+pub fn update_character(character: models.Character, on conn: sqlight.Connection) {
+  let assert Ok(_) =
+    sqlight.query(
+      "UPDATE characters
+      SET name = ?, class = ?, level = ?, current_xp = ?, next_level_xp = ?, extra_xp_modifier = ?
+      WHERE id = ?
+      ",
+      on: conn,
+      with: [
+        sqlight.text(character.name),
+        sqlight.text(character.class),
+        sqlight.int(character.level),
+        sqlight.float(character.current_xp),
+        sqlight.float(character.next_level_xp),
+        sqlight.float(character.extra_xp_modifier),
+        sqlight.int(character.id),
+      ],
+      expecting: dynamic.dynamic,
+    )
+}
+
 pub fn delete_character(id: Int, on conn: sqlight.Connection) {
   let assert Ok(_) =
     sqlight.query(

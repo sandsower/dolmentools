@@ -54,8 +54,8 @@ pub fn end_session(
 
   #(
     session,
-    session.characters 
-    |> list.map(fn(character) {
+    session.characters
+      |> list.map(fn(character) {
       let xp_gained = session.xp *. { 1.0 +. character.extra_xp_modifier }
       let total_xp = xp_gained +. character.current_xp
       models.CharacterReport(
@@ -79,7 +79,7 @@ pub fn parse_character(
     |> form.field(
       "id",
       form.int
-        |> form.and(form.must_equal(0, "id must be 0")),
+        |> form.and(form.must_be_greater_int_than(-1)),
     )
     |> form.field(
       "name",
@@ -109,7 +109,7 @@ pub fn parse_character(
     Ok(data) -> {
       let character =
         models.Character(
-          id: 0,
+          id: data.id,
           name: data.name,
           class: data.class,
           level: data.level,
