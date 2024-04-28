@@ -1,6 +1,7 @@
 import dolmentools/components/button
 import dolmentools/components/input
 import dolmentools/models.{type FeatType, Custom}
+import gleam/option.{None}
 import gleam/string
 import nakai/html.{div, form}
 import nakai/html/attrs.{class, id}
@@ -45,6 +46,7 @@ pub fn component(feat_type: FeatType) -> html.Node(t) {
                 content: "Submit",
                 render_as: button.Button,
                 variant: button.Primary,
+                shortcut: None,
                 class: "m-4  justify-center h-1/2 w-24 justify-center flex items-center",
                 attrs: [],
               ),
@@ -54,6 +56,7 @@ pub fn component(feat_type: FeatType) -> html.Node(t) {
                 content: "Hide",
                 render_as: button.Link,
                 variant: button.Primary,
+                shortcut: None,
                 class: "m-4  justify-center h-1/2 w-24 justify-center flex items-center",
                 attrs: [
                   attrs.Attr("hx-get", "/session/feat/hide"),

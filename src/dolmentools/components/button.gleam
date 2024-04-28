@@ -1,3 +1,5 @@
+import gleam/list
+import gleam/option.{type Option}
 import nakai/html
 import nakai/html/attrs
 
@@ -15,11 +17,16 @@ pub type As {
 pub type Props(a) {
   Props(
     content: String,
+    shortcut: Option(Shortcut),
     variant: Variant,
     render_as: As,
     class: String,
     attrs: List(attrs.Attr(a)),
   )
+}
+
+pub type Shortcut {
+  Shortcut(key: String, route: String)
 }
 
 const shared_class = "disabled:opacity-50 disabled:cursor-not-allowed py-2 px-5 select-none"
@@ -47,10 +54,42 @@ pub fn component(props: Props(t)) -> html.Node(t) {
     <> " "
     <> shared_class
 
+  let shortcuts = case props.shortcut {
+    option.Some(shortcut) -> [
+      attrs.Attr(
+        "hx-trigger",
+        "keyup[event.key=='" <> shortcut.key <> "'] from:body",
+      ),
+    ]
+
+    option.None -> [attrs.Attr("hx-trigger", "click")]
+  }
+
   { class <> " " <> props.class }
   |> case props.render_as {
-    Button -> render_as_button(_, props)
-    Link -> render_as_link(_, props)
-    Image -> render_as_image(_, props)
+    Button -> render_as_button(
+      _,
+      Props(
+        ..props,
+        attrs: props.attrs
+          |> list.append(shortcuts),
+      ),
+    )
+    Link -> render_as_link(
+      _,
+      Props(
+        ..props,
+        attrs: props.attrs
+          |> list.append(shortcuts),
+      ),
+    )
+    Image -> render_as_image(
+      _,
+      Props(
+        ..props,
+        attrs: props.attrs
+          |> list.append(shortcuts),
+      ),
+    )
   }
 }

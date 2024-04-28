@@ -1,6 +1,7 @@
 import nakai/html
 import nakai/html/attrs
 import dolmentools/pages/layout
+import dolmentools/models
 import dolmentools/web.{type Context}
 import wisp
 
@@ -47,5 +48,5 @@ pub fn page(ctx: Context, req: wisp.Request, code: Int) -> html.Node(t) {
       html.p_text([attrs.class("text-base text-stone-500")], get_subtext(code)),
     ],
   )
-  |> layout.render(layout.Props(title: message, ctx: ctx, req: req))
+  |> layout.render(layout.Props(title: message, ctx: ctx, req: req, route: models.Main))
 }

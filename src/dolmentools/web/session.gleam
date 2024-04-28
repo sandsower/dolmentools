@@ -135,7 +135,12 @@ pub fn render_session(req: Request, ctx: Context) -> Response {
   |> list.each(fn(chr) { io.debug(chr.name) })
 
   pages.session(session, feats, characters)
-  |> layout.render(layout.Props(title: "Session", ctx: ctx, req: req))
+  |> layout.render(layout.Props(
+    title: "Session",
+    ctx: ctx,
+    req: req,
+    route: models.Sessions,
+  ))
   |> web.render(200)
 }
 

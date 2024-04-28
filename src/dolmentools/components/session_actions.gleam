@@ -1,6 +1,9 @@
 import dolmentools/components/button
-import dolmentools/models.{type FeatType, Campaign, Extraordinary, Major, Minor, Custom}
+import dolmentools/models.{
+  type FeatType, Campaign, Custom, Extraordinary, Major, Minor,
+}
 import gleam/list
+import gleam/option.{None}
 import gleam/string
 import nakai/html.{div}
 import nakai/html/attrs.{class}
@@ -15,13 +18,14 @@ fn button_for_feat(feat: FeatType) -> html.Node(t) {
     },
     render_as: button.Button,
     variant: button.Primary,
+    shortcut: None,
     attrs: [
       attrs.Attr(
         "hx-get",
         "/session/feat/"
           <> feat
-          |> models.feat_type_to_string
-          |> string.lowercase,
+        |> models.feat_type_to_string
+        |> string.lowercase,
       ),
       attrs.Attr("hx-target", "#feat-form"),
       attrs.Attr("hx-swap", "outerHTML"),
@@ -43,12 +47,10 @@ pub fn component() -> html.Node(t) {
         content: "Finish session",
         render_as: button.Button,
         variant: button.Primary,
-        attrs: [
-          attrs.Attr("hx-post", "/session/finish"),
-        ],
+        shortcut: None,
+        attrs: [attrs.Attr("hx-post", "/session/finish")],
         class: "w-full mt-4 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 md:m-2",
       )),
-      
     ]),
   ])
 }

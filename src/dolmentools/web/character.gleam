@@ -2,7 +2,6 @@ import dolmentools/components/character_card
 import dolmentools/db/characters as db
 import dolmentools/models
 import dolmentools/pages
-import dolmentools/pages/layout
 import dolmentools/service
 import dolmentools/web.{type Context}
 import gleam/http.{Delete, Get, Post}
@@ -42,7 +41,6 @@ pub fn render_character_form(req: Request, ctx: Context) -> Response {
   }
 
   pages.character_form(character)
-  |> layout.render(layout.Props(title: "Creating character", ctx: ctx, req: req))
   |> web.render(200)
 }
 

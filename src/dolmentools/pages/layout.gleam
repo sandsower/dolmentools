@@ -1,11 +1,13 @@
-import nakai/html
-import nakai/html/attrs
+import dolmentools/components/shortcut_view
 import dolmentools/components/tabler
+import dolmentools/models
 import dolmentools/web.{type Context}
+import nakai/html.{Text}
+import nakai/html/attrs
 import wisp
 
 pub type Props {
-  Props(title: String, ctx: Context, req: wisp.Request)
+  Props(title: String, ctx: Context, req: wisp.Request, route: models.Route)
 }
 
 const description = "Dolmentools - a tool to help you manage your dolmenwood campaign."
@@ -73,6 +75,7 @@ fn nav() -> html.Node(t) {
           attrs.class("text-yellow-400 font-bold text-xl px-2 py-1"),
           attrs.href("/"),
           attrs.Attr("hx-boost", "true"),
+          attrs.Attr("hx-trigger", "keyup[event.key=='m'] from:body"),
         ],
         "Dolmentools",
       ),
@@ -98,8 +101,12 @@ pub fn render(child: html.Node(t), props: Props) -> html.Node(t) {
   html.Fragment([
     header(title),
     html.Body(
-      [attrs.class("mt-[9vh]"), attrs.Attr("hx-ext", "response-targets")],
-      [nav(), child],
+      [
+        attrs.class("mt-[9vh]"),
+        attrs.Attr("hx-ext", "response-targets"),
+        attrs.Attr("hx-boost", "true"),
+      ],
+      [nav(), child, shortcut_view.shortcut_view(props.route, False)],
     ),
   ])
 }

@@ -1,4 +1,5 @@
 import dolmentools/components/button
+import gleam/option.{Some}
 import nakai/html.{div, h1_text, img}
 import nakai/html/attrs.{class}
 
@@ -21,6 +22,7 @@ pub fn page() -> html.Node(t) {
         ),
         button.component(button.Props(
           content: "Start/Continue session",
+          shortcut: Some(button.Shortcut("s", "/session")),
           render_as: button.Link,
           variant: button.Primary,
           attrs: [attrs.href("/session"), attrs.Attr("hx-boost", "true")],
@@ -28,6 +30,7 @@ pub fn page() -> html.Node(t) {
         )),
         button.component(button.Props(
           content: "View reports",
+          shortcut: Some(button.Shortcut("r", "/reports")),
           render_as: button.Link,
           variant: button.Primary,
           attrs: [attrs.href("/reports"), attrs.Attr("hx-boost", "true")],
@@ -35,6 +38,7 @@ pub fn page() -> html.Node(t) {
         )),
         button.component(button.Props(
           content: "Manage characters",
+          shortcut: Some(button.Shortcut("c", "/characters")),
           render_as: button.Link,
           variant: button.Primary,
           attrs: [attrs.href("/characters"), attrs.Attr("hx-boost", "true")],

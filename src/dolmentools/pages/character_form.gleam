@@ -5,6 +5,7 @@ import gleam/float
 import gleam/int
 import nakai/html.{Text, div, form, input}
 import nakai/html/attrs.{class}
+import gleam/option.{None}
 
 // Form for creating a new character
 pub fn page(character: models.Character) -> html.Node(t) {
@@ -97,6 +98,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 },
                 render_as: button.Button,
                 variant: button.Primary,
+                shortcut: None,
                 attrs: [attrs.Attr("type", "submit")],
                 class: "block w-max lg:mx-0 mt-6 lg:mt-8",
               )),

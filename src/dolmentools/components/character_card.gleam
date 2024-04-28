@@ -2,6 +2,7 @@ import dolmentools/components/button
 import dolmentools/models.{type Character, type Session}
 import gleam/int
 import gleam/string
+import gleam/option.{None}
 import nakai/html.{Text, button, div, h2_text, label, p_text}
 import nakai/html/attrs.{class}
 
@@ -75,6 +76,7 @@ fn delete_button(char: Character) -> html.Node(t) {
     content: "/assets/images/skull.svg",
     render_as: button.Image,
     variant: button.Ghost,
+    shortcut: None,
     attrs: [
       attrs.Attr("id", "delete"),
       attrs.Attr(
@@ -125,6 +127,7 @@ fn session_button(
     },
     render_as: button.Button,
     variant: button.Ghost,
+    shortcut: None,
     attrs: [
       attrs.Attr("id", id),
       attrs.Attr(hx_method, "/session/" <> char_id_str),

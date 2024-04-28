@@ -48,6 +48,13 @@ pub type Feat {
   Feat(feat_type: FeatType, description: String, xp: Float)
 }
 
+pub type Route {
+  Main
+  Sessions
+  Reports
+  Characters
+}
+
 /// util functions
 pub fn feat_to_string(feat: Feat) -> String {
   feat.feat_type
@@ -100,4 +107,22 @@ pub fn new_character_report() -> CharacterReport {
     total_xp: 0.0,
     level_up: False,
   )
+}
+
+pub fn parse_route(route: String) -> Route {
+  case route {
+    "sessions" -> Sessions
+    "reports" -> Reports
+    "characters" -> Characters
+    _ -> Main
+  }
+}
+
+pub fn route_to_string(route: Route) -> String {
+  case route {
+    Main -> "main"
+    Sessions -> "sessions"
+    Reports -> "reports"
+    Characters -> "characters"
+  }
 }

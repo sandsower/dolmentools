@@ -1,5 +1,6 @@
 import dolmentools/db/reports
 import dolmentools/db/sessions
+import dolmentools/models
 import dolmentools/pages
 import dolmentools/pages/layout
 import dolmentools/web.{type Context}
@@ -48,7 +49,12 @@ pub fn render(req: Request, ctx: Context) -> Response {
 fn render_sessions(req: Request, ctx: Context) -> Response {
   sessions.fetch_all_sessions(ctx.db)
   |> pages.reports
-  |> layout.render(layout.Props(title: "Dolmentools", ctx: ctx, req: req))
+  |> layout.render(layout.Props(
+    title: "Dolmentools",
+    ctx: ctx,
+    req: req,
+    route: models.Reports,
+  ))
   |> web.render(200)
 }
 

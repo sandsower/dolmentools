@@ -72,6 +72,7 @@ pub fn page(characters: List(Character)) -> html.Node(t) {
               content: "Create a character",
               render_as: button.Link,
               variant: button.Primary,
+              shortcut: None,
               attrs: [
                 attrs.Attr("hx-get", "/character"),
                 attrs.Attr("hx-target", "#char-form"),

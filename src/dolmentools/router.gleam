@@ -4,6 +4,7 @@ import dolmentools/web/characters
 import dolmentools/web/reports
 import dolmentools/web/character
 import dolmentools/web/session
+import dolmentools/web/misc
 import dolmentools/web.{type Context, render}
 import dolmentools/pages
 import wisp.{type Request, type Response}
@@ -24,6 +25,7 @@ pub fn handle_request(req: Request, ctx: Context) -> Response {
     ["session", "feat", feat] -> session.handle_feat_request(req, ctx, feat)
     ["session"] | ["session", _] -> session.handle_request(req, ctx)
     ["reports"] | ["reports", _] -> reports.handle_request(req, ctx)
+    ["shortcuts"] -> misc.handle_request(req, ctx)
     _ -> wisp.not_found()
   }
 }
