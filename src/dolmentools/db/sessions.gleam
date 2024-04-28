@@ -66,7 +66,7 @@ pub fn save_session(session: models.Session, on conn: sqlight.Connection) {
     |> birl.to_naive()
 
   let session = case session.id {
-    -1 -> {
+    0 -> {
       io.debug("Saving new session")
       save_new_session(session, timestamp, conn)
     }

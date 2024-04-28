@@ -32,12 +32,12 @@ pub fn render_character_form(req: Request, ctx: Context) -> Response {
     [_, char_id] ->
       char_id
       |> int.parse
-      |> result.unwrap(-1)
-    _ -> -1
+      |> result.unwrap(0)
+    _ -> 0
   }
 
   let character = case char_id {
-    -1 -> models.new_character()
+    0 -> models.new_character()
     _ -> db.fetch_character(char_id, ctx.db)
   }
 
@@ -68,14 +68,14 @@ pub fn save_character(req: Request, ctx: Context) -> Response {
             character_card.Props(variant: character_card.Manager(n), attrs: []),
           )
           |> web.render(200)
-          |> wisp.set_header("HX-Trigger", "refresh-characters") 
+          |> wisp.set_header("HX-Trigger", "refresh-characters")
         }
         _ ->
           wisp.json_response(
             json.object([
-                #("ok", json.bool(False)),
-                #("error", json.string("Failed to save character")),
-              ])
+              #("ok", json.bool(False)),
+              #("error", json.string("Failed to save character")),
+            ])
               |> json.to_string_builder,
             403,
           )
@@ -95,11 +95,11 @@ pub fn delete_character(req: Request, ctx: Context) -> Response {
       char_id
       |> int.parse
       |> result.unwrap(0)
-    _ -> -1
+    _ -> 0
   }
 
   case char_id {
-    -1 -> wisp.internal_server_error()
+    0 -> wisp.internal_server_error()
     id -> {
       let _ = db.delete_character(id, ctx.db)
       div([], [])

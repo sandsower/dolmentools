@@ -51,6 +51,36 @@ pub fn save_character(character: models.Character, on conn: sqlight.Connection) 
   character
 }
 
+pub fn gain_xp(
+  character: models.Character,
+  xp: Float,
+  on conn: sqlight.Connection,
+) -> models.Character {
+  let new_xp = character.current_xp +. xp
+
+  case new_xp >=. character.next_level_xp {
+    True -> {
+      let new_level = character.level + 1
+      let new_next_level_xp = character.next_level_xp *. 2.0
+
+      let character =
+        models.Character(
+          ..character,
+          level: new_level,
+          current_xp: new_xp,
+          next_level_xp: new_next_level_xp,
+        )
+
+      save_character(character, on: conn)
+    }
+    False -> {
+      let character = models.Character(..character, current_xp: new_xp)
+
+      save_character(character, on: conn)
+    }
+  }
+}
+
 pub fn delete_character(id: Int, on conn: sqlight.Connection) {
   let assert Ok(_) =
     sqlight.query(

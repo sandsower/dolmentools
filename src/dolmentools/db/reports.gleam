@@ -15,6 +15,10 @@ pub fn save_character_report(
     birl.now()
     |> birl.to_naive()
 
+  let level_up =
+    report.character.current_xp +. report.xp_gained
+    >. report.character.next_level_xp
+
   let assert Ok([id]) =
     sqlight.query(
       "
@@ -28,7 +32,7 @@ pub fn save_character_report(
         sqlight.int(report.character.id),
         sqlight.float(report.xp_gained),
         sqlight.float(report.total_xp),
-        sqlight.bool(report.level_up),
+        sqlight.bool(level_up),
         sqlight.text(timestamp),
       ],
       dynamic.element(0, dynamic.int),
@@ -36,16 +40,6 @@ pub fn save_character_report(
 
   CharacterReport(..report, id: id)
 }
-
-// pub fn finalize_session(
-//   session: models.Session,
-//   on conn: sqlight.Connection,
-// ) {
-//   session.characters
-//   |> list.map(fn(ch_report) {
-//     save_character_report(ch_report, report.id, conn)
-//   })
-// }
 
 pub fn get_character_reports_for_session(
   session_id: Int,
