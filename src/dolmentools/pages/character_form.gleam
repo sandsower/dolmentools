@@ -3,7 +3,6 @@ import dolmentools/components/input
 import dolmentools/models
 import gleam/float
 import gleam/int
-import gleam/list
 import nakai/html.{Text, div, form, input}
 import nakai/html/attrs.{class}
 
@@ -37,16 +36,6 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 0 -> attrs.Attr("hx-swap", "beforeend")
                 _ -> attrs.Attr("hx-swap", "outerHTML")
               },
-              attrs.Attr(
-                "hx-vals",
-                "{\"id\": \""
-                  <> case character.id {
-                  0 -> 0
-                  _ -> character.id
-                }
-                |> int.to_string
-                  <> "\"}",
-              ),
             ],
             [
               input([

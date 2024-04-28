@@ -1,7 +1,7 @@
 import dolmentools/models
-import sqlight
 import gleam/dynamic
 import gleam/list
+import sqlight
 
 /// Character functions
 pub fn save_character(character: models.Character, on conn: sqlight.Connection) {
@@ -21,46 +21,34 @@ pub fn save_character(character: models.Character, on conn: sqlight.Connection) 
     )
 
   // Insert the character into the database
-  let assert Ok([id]) =
-    sqlight.query(
-      "INSERT INTO characters (name, class, level, current_xp, next_level_xp, extra_xp_modifier)
-    VALUES (?, ?, ?, ?, ?, ?)
-    RETURNING id
-    ",
-      on: conn,
-      with: [
-        sqlight.text(character.name),
-        sqlight.text(character.class),
-        sqlight.int(character.level),
-        sqlight.float(character.current_xp),
-        sqlight.float(character.next_level_xp),
-        sqlight.float(character.extra_xp_modifier),
-      ],
-      expecting: dynamic.element(0, dynamic.int),
-    )
-
-  models.Character(..character, id: id)
-}
-
-pub fn update_character(character: models.Character, on conn: sqlight.Connection) {
+  // if it exists, update it
   let assert Ok(_) =
     sqlight.query(
-      "UPDATE characters
-      SET name = ?, class = ?, level = ?, current_xp = ?, next_level_xp = ?, extra_xp_modifier = ?
-      WHERE id = ?
+      "
+      INSERT INTO characters (id, name, class, level, current_xp, next_level_xp, extra_xp_modifier)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+      name = excluded.name,
+      class = excluded.class,
+      level = excluded.level,
+      current_xp = excluded.current_xp,
+      next_level_xp = excluded.next_level_xp,
+      extra_xp_modifier = excluded.extra_xp_modifier
       ",
       on: conn,
       with: [
+        sqlight.int(character.id),
         sqlight.text(character.name),
         sqlight.text(character.class),
         sqlight.int(character.level),
         sqlight.float(character.current_xp),
         sqlight.float(character.next_level_xp),
         sqlight.float(character.extra_xp_modifier),
-        sqlight.int(character.id),
       ],
       expecting: dynamic.dynamic,
     )
+
+  character
 }
 
 pub fn delete_character(id: Int, on conn: sqlight.Connection) {
