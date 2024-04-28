@@ -58,8 +58,9 @@ pub fn component(props: Props(t)) -> html.Node(t) {
     option.Some(shortcut) -> [
       attrs.Attr(
         "hx-trigger",
-        "keyup[event.key=='" <> shortcut.key <> "'] from:body",
+        "click, keyup[event.key=='" <> shortcut.key <> "'] from:body",
       ),
+      attrs.Attr("hx-on:click", "event.stopPropagation()"),
     ]
 
     option.None -> [attrs.Attr("hx-trigger", "click")]

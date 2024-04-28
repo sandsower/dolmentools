@@ -1,7 +1,7 @@
 import dolmentools/components/button
 import dolmentools/components/input
 import dolmentools/models.{type FeatType, Custom}
-import gleam/option.{None}
+import gleam/option.{None, Some}
 import gleam/string
 import nakai/html.{div, form}
 import nakai/html/attrs.{class, id}
@@ -24,6 +24,7 @@ pub fn component(feat_type: FeatType) -> html.Node(t) {
             input.component(input.Props(
               label: "Description for " <> feat_text <> " feat",
               name: "description",
+              focus: True,
               default: "",
               type_: "text",
               required: True,
@@ -33,6 +34,7 @@ pub fn component(feat_type: FeatType) -> html.Node(t) {
                 input.component(input.Props(
                   label: "XP cost",
                   name: "xp",
+                  focus: False,
                   default: "0.0",
                   type_: "number",
                   required: False,
@@ -56,7 +58,7 @@ pub fn component(feat_type: FeatType) -> html.Node(t) {
                 content: "Hide",
                 render_as: button.Link,
                 variant: button.Primary,
-                shortcut: None,
+                shortcut: Some(button.Shortcut("Escape", "")),
                 class: "m-4  justify-center h-1/2 w-24 justify-center flex items-center",
                 attrs: [
                   attrs.Attr("hx-get", "/session/feat/hide"),

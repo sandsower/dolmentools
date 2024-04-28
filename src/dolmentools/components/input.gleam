@@ -9,6 +9,7 @@ pub type Props(a) {
     label: String,
     type_: String,
     required: Bool,
+    focus: Bool,
   )
 }
 
@@ -25,6 +26,11 @@ pub fn component(props: Props(t)) -> html.Node(t) {
         attrs.type_(props.type_),
         attrs.name(props.name),
         attrs.value(props.default),
+        attrs.Attr("_", "on keyup[key is not 'Escape'] halt the event"),
+        case props.focus {
+          True -> attrs.Attr("autofocus", "true")
+          False -> attrs.Attr("autofocus", "false")
+        },
       ]
       |> list.append(case props.required {
         True -> [attrs.Attr("required", "true")]

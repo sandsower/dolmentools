@@ -5,7 +5,8 @@ import nakai/html/attrs
 fn transition_out_class(hide: Bool) -> String {
   case hide {
     True -> "opacity-0"
-    False -> "transition-all duration-300 delay-300 opacity-100 hover:opacity-25"
+    False ->
+      "transition-all duration-300 delay-300 opacity-100 hover:opacity-25"
   }
 }
 
@@ -21,7 +22,7 @@ pub fn shortcut_view(route: Route, hide: Bool) -> html.Node(t) {
         "/shortcuts",
       ),
       attrs.Attr("hx-swap", "outerHTML"),
-      attrs.Attr("hx-trigger", "keyup[event.key=='?'] from:body"),
+      attrs.Attr("hx-trigger", "keyup[event.key=='?'] from:body :not(input)"),
       attrs.Attr("hx-boost", "true"),
       attrs.Attr(
         "hx-vals",
@@ -60,7 +61,16 @@ pub fn render_shortcuts(route: Route) -> html.Node(t) {
       [html.p([attrs.class("text-xs")], [Text("`m` -> go to main")])]
     }
     models.Sessions -> {
-      [html.p([attrs.class("text-xs")], [Text("`m` -> go to main")])]
+      [
+        html.p([attrs.class("text-xs")], [Text("`m` -> go to main")]),
+        html.p([attrs.class("text-xs")], [Text("-------------------")]),
+        html.p([attrs.class("text-xs")], [Text("`a` -> minor feat")]),
+        html.p([attrs.class("text-xs")], [Text("`s` -> major feat")]),
+        html.p([attrs.class("text-xs")], [Text("`e` -> extraordinary feat")]),
+        html.p([attrs.class("text-xs")], [Text("`d` -> campaign feat")]),
+        html.p([attrs.class("text-xs")], [Text("`c` -> custom feat")]),
+        html.p([attrs.class("text-xs")], [Text("`f` -> finish session")]),
+      ]
     }
     models.Reports -> {
       [html.p([attrs.class("text-xs")], [Text("`m` -> go to main")])]

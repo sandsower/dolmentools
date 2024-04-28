@@ -52,6 +52,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
               input.component(input.Props(
                 label: "Name",
                 name: "name",
+                focus: True,
                 default: character.name,
                 type_: "text",
                 required: True,
@@ -59,6 +60,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
               input.component(input.Props(
                 label: "Class",
                 name: "class",
+                focus: False,
                 default: character.class,
                 type_: "text",
                 required: True,
@@ -66,6 +68,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
               input.component(input.Props(
                 label: "Level",
                 name: "level",
+                focus: False,
                 default: int.to_string(character.level),
                 type_: "number",
                 required: True,
@@ -73,6 +76,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
               input.component(input.Props(
                 label: "Current XP",
                 name: "current_xp",
+                focus: False,
                 default: float.to_string(character.current_xp),
                 type_: "number",
                 required: True,
@@ -80,6 +84,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
               input.component(input.Props(
                 label: "Extra XP Modifier",
                 name: "extra_xp_modifier",
+                focus: False,
                 default: float.to_string(character.extra_xp_modifier),
                 type_: "number",
                 required: True,
@@ -87,6 +92,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
               input.component(input.Props(
                 label: "XP required to level",
                 name: "next_level_xp",
+                focus: False,
                 default: float.to_string(character.next_level_xp),
                 type_: "number",
                 required: True,

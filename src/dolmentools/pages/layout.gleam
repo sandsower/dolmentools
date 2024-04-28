@@ -34,6 +34,7 @@ pub fn header(title: String) -> html.Node(t) {
     ]),
     html.link([attrs.rel("stylesheet"), attrs.href("/assets/css/styles.css")]),
     html.Element("script", [attrs.src("/assets/js/htmx.min.js")], []),
+    html.Element("script", [attrs.src("/assets/js/_hyperscript.min.js")], []),
     html.title(title),
   ])
 }
@@ -79,6 +80,7 @@ pub fn render(child: html.Node(t), props: Props) -> html.Node(t) {
     html.Body(
       [
         attrs.class("mt-[9vh]"),
+        attrs.id("main"),
         attrs.Attr("hx-ext", "response-targets"),
         attrs.Attr("hx-boost", "true"),
       ],
