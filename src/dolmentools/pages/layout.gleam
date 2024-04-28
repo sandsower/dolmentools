@@ -25,15 +25,6 @@ pub fn header(title: String) -> html.Node(t) {
     html.meta([attrs.property("og:title"), attrs.content(title)]),
     html.meta([attrs.property("og:description"), attrs.content(description)]),
     html.meta([attrs.property("og:type"), attrs.content("website")]),
-    html.meta([
-      attrs.property("twitter:card"),
-      attrs.content("summary_large_image"),
-    ]),
-    html.meta([attrs.property("twitter:creator"), attrs.content("@trulyao")]),
-    html.meta([
-      attrs.property("twitter:description"),
-      attrs.content(description),
-    ]),
     // styles and scripts
     html.link([
       attrs.rel("stylesheet"),
@@ -43,21 +34,6 @@ pub fn header(title: String) -> html.Node(t) {
     ]),
     html.link([attrs.rel("stylesheet"), attrs.href("/assets/css/styles.css")]),
     html.Element("script", [attrs.src("/assets/js/htmx.min.js")], []),
-    html.Element(
-      "script",
-      [attrs.src("/assets/js/ext/response-targets.js")],
-      [],
-    ),
-    html.Element(
-      "script",
-      [attrs.src("https://unpkg.com/hyperscript.org@0.9.12")],
-      [],
-    ),
-    html.Element(
-      "script",
-      [attrs.src("/assets/js/app.js"), attrs.type_("module"), attrs.defer()],
-      [],
-    ),
     html.title(title),
   ])
 }
