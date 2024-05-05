@@ -22,22 +22,26 @@ pub fn save_character(character: models.Character, on conn: sqlight.Connection) 
 
   // Insert the character into the database
   // if it exists, update it
+  case character.id {
+    0 -> insert_character(character, on: conn)
+    _ -> update_character(character, on: conn)
+  }
+
+  character
+}
+
+pub fn insert_character(
+  character: models.Character,
+  on conn: sqlight.Connection,
+) -> models.Character {
   let assert Ok(_) =
     sqlight.query(
       "
-      INSERT INTO characters (id, name, class, level, current_xp, next_level_xp, extra_xp_modifier)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(id) DO UPDATE SET
-      name = excluded.name,
-      class = excluded.class,
-      level = excluded.level,
-      current_xp = excluded.current_xp,
-      next_level_xp = excluded.next_level_xp,
-      extra_xp_modifier = excluded.extra_xp_modifier
+      INSERT INTO characters (name, class, level, current_xp, next_level_xp, extra_xp_modifier)
+      VALUES (?, ?, ?, ?, ?, ?)
       ",
       on: conn,
       with: [
-        sqlight.int(character.id),
         sqlight.text(character.name),
         sqlight.text(character.class),
         sqlight.int(character.level),
@@ -47,6 +51,31 @@ pub fn save_character(character: models.Character, on conn: sqlight.Connection) 
       ],
       expecting: dynamic.dynamic,
     )
+
+  character
+}
+
+pub fn update_character(
+  character: models.Character,
+  on conn: sqlight.Connection,
+) -> models.Character {
+  let _ = sqlight.query(
+    "
+      UPDATE characters SET name = ?, class = ?, level = ?, current_xp = ?, next_level_xp = ?, extra_xp_modifier = ?
+      WHERE id = ?
+      ",
+    on: conn,
+    with: [
+      sqlight.text(character.name),
+      sqlight.text(character.class),
+      sqlight.int(character.level),
+      sqlight.float(character.current_xp),
+      sqlight.float(character.next_level_xp),
+      sqlight.float(character.extra_xp_modifier),
+      sqlight.int(character.id),
+    ],
+    expecting: dynamic.dynamic,
+  )
 
   character
 }
