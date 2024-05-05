@@ -1,6 +1,7 @@
-import nakai/html
-import nakai/html/attrs
 import gleam/list
+import gleam/option.{type Option}
+import nakai/html
+import nakai/html/attrs.{type Attr}
 
 pub type Props(a) {
   Props(
@@ -10,6 +11,7 @@ pub type Props(a) {
     type_: String,
     required: Bool,
     focus: Bool,
+    additional_attrs: Option(List(Attr(a))),
   )
 }
 
@@ -32,6 +34,10 @@ pub fn component(props: Props(t)) -> html.Node(t) {
           False -> attrs.Attr("autofocus", "false")
         },
       ]
+      |> list.append(case props.additional_attrs {
+        option.Some(attrs) -> attrs
+        option.None -> []
+      })
       |> list.append(case props.required {
         True -> [attrs.Attr("required", "true")]
         False -> []

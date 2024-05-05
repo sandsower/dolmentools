@@ -3,9 +3,9 @@ import dolmentools/components/input
 import dolmentools/models
 import gleam/float
 import gleam/int
+import gleam/option.{None}
 import nakai/html.{Text, div, form, input}
 import nakai/html/attrs.{class}
-import gleam/option.{None}
 
 // Form for creating a new character
 pub fn page(character: models.Character) -> html.Node(t) {
@@ -56,6 +56,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 default: character.name,
                 type_: "text",
                 required: True,
+                additional_attrs: option.None,
               )),
               input.component(input.Props(
                 label: "Class",
@@ -64,6 +65,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 default: character.class,
                 type_: "text",
                 required: True,
+                additional_attrs: option.None,
               )),
               input.component(input.Props(
                 label: "Level",
@@ -72,6 +74,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 default: int.to_string(character.level),
                 type_: "number",
                 required: True,
+                additional_attrs: option.None,
               )),
               input.component(input.Props(
                 label: "Current XP",
@@ -80,6 +83,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 default: float.to_string(character.current_xp),
                 type_: "number",
                 required: True,
+                additional_attrs: option.None,
               )),
               input.component(input.Props(
                 label: "Extra XP Modifier",
@@ -88,6 +92,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 default: float.to_string(character.extra_xp_modifier),
                 type_: "number",
                 required: True,
+                additional_attrs: option.Some([attrs.Attr("step", "0.01")]),
               )),
               input.component(input.Props(
                 label: "XP required to level",
@@ -96,6 +101,7 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 default: float.to_string(character.next_level_xp),
                 type_: "number",
                 required: True,
+                additional_attrs: option.None,
               )),
               button.component(button.Props(
                 content: case character.id {

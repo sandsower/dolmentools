@@ -23,22 +23,24 @@ pub fn save_character(character: models.Character, on conn: sqlight.Connection) 
   // Insert the character into the database
   // if it exists, update it
   case character.id {
-    0 -> insert_character(character, on: conn)
+    0 -> {
+      let id = insert_character(character, on: conn)
+      models.Character(..character, id: id)
+    }
     _ -> update_character(character, on: conn)
   }
-
-  character
 }
 
 pub fn insert_character(
   character: models.Character,
   on conn: sqlight.Connection,
-) -> models.Character {
-  let assert Ok(_) =
+) -> Int {
+  let assert Ok([id]) =
     sqlight.query(
       "
       INSERT INTO characters (name, class, level, current_xp, next_level_xp, extra_xp_modifier)
       VALUES (?, ?, ?, ?, ?, ?)
+      RETURNING id
       ",
       on: conn,
       with: [
@@ -49,33 +51,34 @@ pub fn insert_character(
         sqlight.float(character.next_level_xp),
         sqlight.float(character.extra_xp_modifier),
       ],
-      expecting: dynamic.dynamic,
+      expecting: dynamic.element(0, dynamic.int),
     )
 
-  character
+  id
 }
 
 pub fn update_character(
   character: models.Character,
   on conn: sqlight.Connection,
 ) -> models.Character {
-  let _ = sqlight.query(
-    "
+  let _ =
+    sqlight.query(
+      "
       UPDATE characters SET name = ?, class = ?, level = ?, current_xp = ?, next_level_xp = ?, extra_xp_modifier = ?
       WHERE id = ?
       ",
-    on: conn,
-    with: [
-      sqlight.text(character.name),
-      sqlight.text(character.class),
-      sqlight.int(character.level),
-      sqlight.float(character.current_xp),
-      sqlight.float(character.next_level_xp),
-      sqlight.float(character.extra_xp_modifier),
-      sqlight.int(character.id),
-    ],
-    expecting: dynamic.dynamic,
-  )
+      on: conn,
+      with: [
+        sqlight.text(character.name),
+        sqlight.text(character.class),
+        sqlight.int(character.level),
+        sqlight.float(character.current_xp),
+        sqlight.float(character.next_level_xp),
+        sqlight.float(character.extra_xp_modifier),
+        sqlight.int(character.id),
+      ],
+      expecting: dynamic.dynamic,
+    )
 
   character
 }

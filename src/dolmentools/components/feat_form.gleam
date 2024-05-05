@@ -28,6 +28,7 @@ pub fn component(feat_type: FeatType) -> html.Node(t) {
               default: "",
               type_: "text",
               required: True,
+              additional_attrs: option.None,
             )),
             case feat_type {
               Custom ->
@@ -38,6 +39,7 @@ pub fn component(feat_type: FeatType) -> html.Node(t) {
                   default: "0.0",
                   type_: "number",
                   required: False,
+                  additional_attrs: option.None,
                 ))
               _ -> div([], [])
             },
