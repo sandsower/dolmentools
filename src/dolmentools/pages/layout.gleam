@@ -2,7 +2,7 @@ import dolmentools/components/shortcut_view
 import dolmentools/components/tabler
 import dolmentools/models
 import dolmentools/web.{type Context}
-import nakai/html.{Text}
+import nakai/html
 import nakai/html/attrs
 import wisp
 

@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS characters (
   name TEXT NOT NULL,
   class TEXT NOT NULL,
   level INTEGER NOT NULL,
-  current_xp REAL NOT NULL,
-  next_level_xp REAL NOT NULL,
-  extra_xp_modifier REAL NOT NULL
+  current_xp INTEGER NOT NULL,
+  next_level_xp INTEGER NOT NULL,
+  previous_level_xp INTEGER NOT NULL,
+  extra_xp_modifier INTEGER NOT NULL
 )

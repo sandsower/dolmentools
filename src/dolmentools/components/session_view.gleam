@@ -1,5 +1,5 @@
 import dolmentools/models.{type Session}
-import gleam/float
+import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
@@ -23,7 +23,7 @@ pub fn component(session: Session, feats: List(models.Feat)) -> html.Node(t) {
             Text("Total XP: "),
             Text(
               session.required_xp
-              |> float.to_string,
+              |> int.to_string,
             ),
           ]),
         ]),

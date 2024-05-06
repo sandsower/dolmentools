@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS session_feats (
   session_id INTEGER,
   feat_type TEXT,
   description TEXT,
-  xp REAL,
+  xp INTEGER,
   created_at TEXT
 )

@@ -16,8 +16,8 @@ pub fn save_character_report(
     |> birl.to_naive()
 
   let level_up =
-    report.character.current_xp +. report.xp_gained
-    >. report.character.next_level_xp
+    report.character.current_xp + report.xp_gained
+    > report.character.next_level_xp
 
   let assert Ok([id]) =
     sqlight.query(
@@ -30,8 +30,8 @@ pub fn save_character_report(
       [
         sqlight.int(session_id),
         sqlight.int(report.character.id),
-        sqlight.float(report.xp_gained),
-        sqlight.float(report.total_xp),
+        sqlight.int(report.xp_gained),
+        sqlight.int(report.total_xp),
         sqlight.bool(level_up),
         sqlight.text(timestamp),
       ],
@@ -86,8 +86,8 @@ fn character_report_decoder(
         |> result.unwrap(0)
       Ok(characters.fetch_character(id, conn))
     }),
-    dynamic.element(3, dynamic.float),
-    dynamic.element(4, dynamic.float),
+    dynamic.element(3, dynamic.int),
+    dynamic.element(4, dynamic.int),
     dynamic.element(5, fn(x) -> Result(Bool, List(dynamic.DecodeError)) {
       let id =
         dynamic.int(x)

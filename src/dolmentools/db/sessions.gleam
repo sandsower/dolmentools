@@ -21,8 +21,8 @@ fn save_new_session(
       ",
       conn,
       [
-        sqlight.float(session.required_xp),
-        sqlight.float(session.xp),
+        sqlight.int(session.required_xp),
+        sqlight.int(session.xp),
         sqlight.text(timestamp),
         sqlight.text(timestamp),
       ],
@@ -45,8 +45,8 @@ fn save_existing_session(
       ",
       conn,
       [
-        sqlight.float(session.required_xp),
-        sqlight.float(session.xp),
+        sqlight.int(session.required_xp),
+        sqlight.int(session.xp),
         sqlight.text(timestamp),
         sqlight.int(case session.status {
           models.Active -> 1
@@ -137,7 +137,10 @@ pub fn fetch_active_session(on conn: sqlight.Connection) -> models.Session {
   }
 }
 
-pub fn fetch_session(session_id: Int, on conn: sqlight.Connection) -> models.Session {
+pub fn fetch_session(
+  session_id: Int,
+  on conn: sqlight.Connection,
+) -> models.Session {
   let assert Ok(session) =
     sqlight.query(
       "
@@ -161,10 +164,8 @@ pub fn fetch_session(session_id: Int, on conn: sqlight.Connection) -> models.Ses
       |> list.first()
     }
   {
-    Ok(session) ->
-      session
-    Error(Nil) ->
-      models.new_session()
+    Ok(session) -> session
+    Error(Nil) -> models.new_session()
   }
 }
 
@@ -208,7 +209,7 @@ pub fn log_feat(
         sqlight.int(session.id),
         sqlight.text(models.feat_to_string(feat)),
         sqlight.text(feat.description),
-        sqlight.float(feat.xp),
+        sqlight.int(feat.xp),
         sqlight.text(timestamp),
       ],
       dynamic.dynamic,
@@ -278,8 +279,8 @@ pub fn add_character_to_session(
   Session(
     ..session,
     characters: characters,
-    required_xp: list.fold(characters, 0.0, fn(acc, character) {
-      acc +. character.next_level_xp
+    required_xp: list.fold(characters, 0, fn(acc, character) {
+      acc + { character.next_level_xp - character.previous_level_xp }
     }),
   )
   |> save_session(conn)
@@ -321,8 +322,8 @@ pub fn remove_character_from_session(
   Session(
     ..session,
     characters: characters,
-    required_xp: list.fold(characters, 0.0, fn(acc, character) {
-      acc +. character.next_level_xp
+    required_xp: list.fold(characters, 0, fn(acc, character) {
+      acc + { character.next_level_xp - character.previous_level_xp }
     }),
   )
   |> save_session(conn)
@@ -334,8 +335,8 @@ pub fn session_decoder() -> dynamic.Decoder(models.Session) {
     Session,
     dynamic.element(0, dynamic.int),
     dynamic.element(0, characters.default_character_decoder),
-    dynamic.element(1, dynamic.float),
-    dynamic.element(2, dynamic.float),
+    dynamic.element(1, dynamic.int),
+    dynamic.element(2, dynamic.int),
     dynamic.element(3, fn(x) -> Result(
       models.SessionStatus,
       List(dynamic.DecodeError),
@@ -369,6 +370,6 @@ pub fn feat_decoder() -> dynamic.Decoder(models.Feat) {
       |> Ok
     }),
     dynamic.element(1, dynamic.string),
-    dynamic.element(2, dynamic.float),
+    dynamic.element(2, dynamic.int),
   )
 }

@@ -1,9 +1,8 @@
 import dolmentools/components/character_report_card
 import dolmentools/components/session_card
 import dolmentools/models
-import gleam/float
 import gleam/list
-import nakai/html.{div, h1_text, img}
+import nakai/html.{div}
 import nakai/html/attrs.{class, id}
 
 pub fn index(sessions: List(models.Session)) -> html.Node(t) {

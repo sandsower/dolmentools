@@ -20,8 +20,8 @@ pub fn initialize_db_structure(on conn: sqlight.Connection) {
     [
       "CREATE TABLE IF NOT EXISTS sessions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        required_xp REAL,
-        xp REAL,
+        required_xp INTEGER,
+        xp INTEGER,
         is_active BOOLEAN DEFAULT true,
         created_at TEXT,
         updated_at TEXT
@@ -32,9 +32,9 @@ pub fn initialize_db_structure(on conn: sqlight.Connection) {
         name TEXT NOT NULL,
         class TEXT NOT NULL,
         level INTEGER NOT NULL,
-        current_xp REAL NOT NULL,
-        next_level_xp REAL NOT NULL,
-        extra_xp_modifier REAL NOT NULL
+        current_xp INTEGER NOT NULL,
+        next_level_xp INTEGER NOT NULL,
+        extra_xp_modifier INTEGER NOT NULL
       )",
       "
 
@@ -52,7 +52,7 @@ pub fn initialize_db_structure(on conn: sqlight.Connection) {
         session_id INTEGER,
         feat_type TEXT,
         description TEXT,
-        xp REAL,
+        xp INTEGER,
         created_at TEXT
       )",
       "
@@ -69,8 +69,8 @@ pub fn initialize_db_structure(on conn: sqlight.Connection) {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         session_report_id INTEGER,
         character_id INTEGER,
-        xp_gained REAL,
-        total_xp REAL,
+        xp_gained INTEGER,
+        total_xp INTEGER,
         level_up BOOLEAN,
         created_at TEXT,
         FOREIGN KEY (session_report_id) REFERENCES session_reports(id)

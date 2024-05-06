@@ -21,18 +21,20 @@ const characters = [
     name: "A",
     class: "Fighter",
     level: 1,
-    current_xp: 100.0,
-    next_level_xp: 200.0,
-    extra_xp_modifier: 0.1,
+    current_xp: 100,
+    next_level_xp: 200,
+    previous_level_xp: 0,
+    extra_xp_modifier: 10,
   ),
   models.Character(
     id: 1,
     name: "B",
     class: "Rogue",
     level: 2,
-    current_xp: 100.0,
-    next_level_xp: 300.0,
-    extra_xp_modifier: 0.2,
+    current_xp: 100,
+    next_level_xp: 300,
+    previous_level_xp: 0,
+    extra_xp_modifier: 20,
   ),
 ]
 
@@ -47,8 +49,8 @@ pub fn fetch_all_test() {
     models.Session(
       id: 0,
       characters: [],
-      required_xp: 0.0,
-      xp: 0.0,
+      required_xp: 0,
+      xp: 0,
       status: models.Active,
     )
 
@@ -73,8 +75,8 @@ pub fn add_character_test() {
     models.Session(
       id: 0,
       characters: [],
-      required_xp: 0.0,
-      xp: 0.0,
+      required_xp: 0,
+      xp: 0,
       status: models.Active,
     )
     |> sessions.save_session(conn)
@@ -109,8 +111,8 @@ pub fn remove_character_test() {
     models.Session(
       id: 0,
       characters: [],
-      required_xp: 0.0,
-      xp: 0.0,
+      required_xp: 0,
+      xp: 0,
       status: models.Active,
     )
     |> sessions.save_session(conn)
@@ -160,8 +162,8 @@ pub fn log_feats_test() {
     models.Session(
       id: 0,
       characters: [],
-      required_xp: 0.0,
-      xp: 0.0,
+      required_xp: 0,
+      xp: 0,
       status: models.Active,
     )
     |> sessions.save_session(conn)
@@ -185,7 +187,7 @@ pub fn log_feats_test() {
   |> should.equal(session)
 
   let minor_feat =
-    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0)
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0)
 
   session
   |> sessions.log_feat(minor_feat, conn)
@@ -206,8 +208,8 @@ pub fn finalize_session_test() {
     models.Session(
       id: 0,
       characters: [],
-      required_xp: 0.0,
-      xp: 0.0,
+      required_xp: 0,
+      xp: 0,
       status: models.Active,
     )
     |> sessions.save_session(conn)
@@ -231,7 +233,7 @@ pub fn finalize_session_test() {
   |> should.equal(session)
 
   let minor_feat =
-    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0)
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0)
 
   session
   |> sessions.log_feat(minor_feat, conn)
@@ -252,5 +254,5 @@ pub fn finalize_session_test() {
   |> should.equal(session)
 
   sessions.fetch_active_session(conn)
-  |> should.equal(models.Session(0, [], 0.0, 0.0, models.Active))
+  |> should.equal(models.Session(0, [], 0, 0, models.Active))
 }

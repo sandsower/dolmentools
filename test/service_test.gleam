@@ -13,18 +13,20 @@ const characters = [
     name: "A",
     class: "Fighter",
     level: 1,
-    current_xp: 100.0,
-    next_level_xp: 200.0,
-    extra_xp_modifier: 0.1,
+    current_xp: 100,
+    next_level_xp: 200,
+    previous_level_xp: 0,
+    extra_xp_modifier: 10,
   ),
   models.Character(
     id: 1,
     name: "B",
     class: "Rogue",
     level: 2,
-    current_xp: 100.0,
-    next_level_xp: 300.0,
-    extra_xp_modifier: 0.2,
+    current_xp: 100,
+    next_level_xp: 300,
+    previous_level_xp: 0,
+    extra_xp_modifier: 20,
   ),
 ]
 
@@ -33,9 +35,10 @@ const default_character = models.Character(
   name: "A",
   class: "Fighter",
   level: 1,
-  current_xp: 100.0,
-  next_level_xp: 200.0,
-  extra_xp_modifier: 0.1,
+  current_xp: 100,
+  next_level_xp: 200,
+  previous_level_xp: 0,
+  extra_xp_modifier: 10,
 )
 
 pub fn main() {
@@ -46,10 +49,10 @@ pub fn start_session_test() {
   let session = models.new_session()
 
   session.required_xp
-  |> should.equal(0.0)
+  |> should.equal(0)
 
   session.xp
-  |> should.equal(0.0)
+  |> should.equal(0)
 }
 
 pub fn feat_acquired_test() {
@@ -57,59 +60,49 @@ pub fn feat_acquired_test() {
     models.Session(
       id: 1,
       characters: characters,
-      required_xp: 500.0,
-      xp: 0.0,
+      required_xp: 500,
+      xp: 0,
       status: models.Active,
     )
 
   let minor_feat =
-    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0)
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0)
   let major_feat =
-    models.Feat(feat_type: models.Major, description: "Major feat", xp: 0.0)
+    models.Feat(feat_type: models.Major, description: "Major feat", xp: 0)
 
   session
   |> service.feat_acquired(minor_feat)
   |> function.tap(fn(session) {
-    should.equal(
-      session,
-      models.Session(1, characters, 500.0, 10.0, models.Active),
-    )
+    should.equal(session, models.Session(1, characters, 500, 10, models.Active))
   })
   |> service.feat_acquired(minor_feat)
   |> function.tap(fn(session) {
-    should.equal(
-      session,
-      models.Session(1, characters, 500.0, 20.0, models.Active),
-    )
+    should.equal(session, models.Session(1, characters, 500, 20, models.Active))
   })
   |> service.feat_acquired(major_feat)
-  |> should.equal(models.Session(1, characters, 500.0, 45.0, models.Active))
+  |> should.equal(models.Session(1, characters, 500, 45, models.Active))
 }
 
 pub fn calculate_xp_for_feat_test() {
   let feats = [
-    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0),
-    models.Feat(feat_type: models.Major, description: "Major feat", xp: 0.0),
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0),
+    models.Feat(feat_type: models.Major, description: "Major feat", xp: 0),
     models.Feat(
       feat_type: models.Extraordinary,
       description: "Extraordinary feat",
-      xp: 0.0,
+      xp: 0,
     ),
-    models.Feat(
-      feat_type: models.Campaign,
-      description: "Campaign feat",
-      xp: 0.0,
-    ),
+    models.Feat(feat_type: models.Campaign, description: "Campaign feat", xp: 0),
   ]
 
-  let expected_xp = [2.0, 5.0, 10.0, 15.0]
+  let expected_xp = [2, 5, 10, 15]
 
   let session =
     models.Session(
       id: 1,
       characters: characters,
-      required_xp: 100.0,
-      xp: 0.0,
+      required_xp: 100,
+      xp: 0,
       status: models.Active,
     )
 
@@ -119,11 +112,11 @@ pub fn calculate_xp_for_feat_test() {
     |> should.equal(models.Session(
       session.id,
       session.characters,
-      100.0,
+      100,
       {
         expected_xp
         |> list.at(i)
-        |> result.unwrap(0.0)
+        |> result.unwrap(0)
       },
       models.Active,
     ))
@@ -137,15 +130,15 @@ pub fn end_session_test() {
     models.Session(
       id: session.id,
       characters: characters,
-      required_xp: list.fold(characters, 0.0, fn(acc, character) {
-        acc +. character.next_level_xp
+      required_xp: list.fold(characters, 0, fn(acc, character) {
+        acc + character.next_level_xp
       }),
-      xp: 0.0,
+      xp: 0,
       status: models.Active,
     )
 
   let minor_feat =
-    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0.0)
+    models.Feat(feat_type: models.Minor, description: "Minor feat", xp: 0)
 
   let expected_reports =
     [
@@ -155,8 +148,8 @@ pub fn end_session_test() {
         character: characters
           |> list.at(0)
           |> result.unwrap(default_character),
-        xp_gained: 22.0,
-        total_xp: 122.0,
+        xp_gained: 22,
+        total_xp: 122,
         level_up: False,
       ),
       models.CharacterReport(
@@ -165,8 +158,8 @@ pub fn end_session_test() {
         character: characters
           |> list.at(1)
           |> result.unwrap(default_character),
-        xp_gained: 24.0,
-        total_xp: 124.0,
+        xp_gained: 24,
+        total_xp: 124,
         level_up: False,
       ),
     ]

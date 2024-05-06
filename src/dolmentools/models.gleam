@@ -4,9 +4,10 @@ pub type Character {
     name: String,
     class: String,
     level: Int,
-    current_xp: Float,
-    next_level_xp: Float,
-    extra_xp_modifier: Float,
+    current_xp: Int,
+    next_level_xp: Int,
+    previous_level_xp: Int,
+    extra_xp_modifier: Int,
   )
 }
 
@@ -19,8 +20,8 @@ pub type Session {
   Session(
     id: Int,
     characters: List(Character),
-    required_xp: Float,
-    xp: Float,
+    required_xp: Int,
+    xp: Int,
     status: SessionStatus,
   )
 }
@@ -30,8 +31,8 @@ pub type CharacterReport {
     id: Int,
     session: Session,
     character: Character,
-    xp_gained: Float,
-    total_xp: Float,
+    xp_gained: Int,
+    total_xp: Int,
     level_up: Bool,
   )
 }
@@ -45,7 +46,7 @@ pub type FeatType {
 }
 
 pub type Feat {
-  Feat(feat_type: FeatType, description: String, xp: Float)
+  Feat(feat_type: FeatType, description: String, xp: Int)
 }
 
 pub type Route {
@@ -88,14 +89,15 @@ pub fn new_character() -> Character {
     name: "",
     class: "",
     level: 0,
-    current_xp: 0.0,
-    next_level_xp: 0.0,
-    extra_xp_modifier: 0.0,
+    current_xp: 0,
+    next_level_xp: 0,
+    previous_level_xp: 0,
+    extra_xp_modifier: 0,
   )
 }
 
 pub fn new_session() -> Session {
-  Session(id: 0, characters: [], required_xp: 0.0, xp: 0.0, status: Active)
+  Session(id: 0, characters: [], required_xp: 0, xp: 0, status: Active)
 }
 
 pub fn new_character_report() -> CharacterReport {
@@ -103,8 +105,8 @@ pub fn new_character_report() -> CharacterReport {
     id: 0,
     session: new_session(),
     character: new_character(),
-    xp_gained: 0.0,
-    total_xp: 0.0,
+    xp_gained: 0,
+    total_xp: 0,
     level_up: False,
   )
 }

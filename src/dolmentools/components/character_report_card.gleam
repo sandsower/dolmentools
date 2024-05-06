@@ -1,8 +1,6 @@
 import dolmentools/models
-import gleam/float
 import gleam/int
-import gleam/string
-import nakai/html.{Text, button, div, h1_text, h2_text, label, p_text}
+import nakai/html.{div, h1_text, p_text}
 import nakai/html/attrs.{class}
 
 pub fn component(report: models.CharacterReport) -> html.Node(t) {
@@ -19,13 +17,13 @@ pub fn component(report: models.CharacterReport) -> html.Node(t) {
         [],
         "XP for session: "
           <> report.xp_gained
-        |> float.to_string,
+        |> int.to_string,
       ),
       p_text(
         [],
         "Total XP: "
           <> report.total_xp
-        |> float.to_string,
+        |> int.to_string,
       ),
     ]),
     div([class("my-2")], [
@@ -33,7 +31,7 @@ pub fn component(report: models.CharacterReport) -> html.Node(t) {
         [],
         "TOTAL XP"
           <> report.session.xp
-        |> float.to_string,
+        |> int.to_string,
       ),
     ]),
   ])

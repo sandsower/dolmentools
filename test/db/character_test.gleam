@@ -1,9 +1,9 @@
+import dolmentools/db/characters
+import dolmentools/models.{Character}
+import gleam/list
 import gleeunit
 import gleeunit/should
 import sqlight
-import dolmentools/models.{Character}
-import dolmentools/db/characters
-import gleam/list
 
 pub fn main() {
   gleeunit.main()
@@ -15,18 +15,20 @@ const characters = [
     name: "A",
     class: "Fighter",
     level: 1,
-    current_xp: 100.0,
-    next_level_xp: 200.0,
-    extra_xp_modifier: 0.1,
+    current_xp: 100,
+    previous_level_xp: 0,
+    next_level_xp: 200,
+    extra_xp_modifier: 10,
   ),
   Character(
     id: 2,
     name: "B",
     class: "Rogue",
     level: 2,
-    current_xp: 100.0,
-    next_level_xp: 300.0,
-    extra_xp_modifier: 0.2,
+    current_xp: 100,
+    previous_level_xp: 0,
+    next_level_xp: 300,
+    extra_xp_modifier: 20,
   ),
 ]
 

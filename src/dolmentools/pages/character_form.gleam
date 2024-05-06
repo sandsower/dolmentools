@@ -1,7 +1,6 @@
 import dolmentools/components/button
 import dolmentools/components/input
 import dolmentools/models
-import gleam/float
 import gleam/int
 import gleam/option.{None}
 import nakai/html.{Text, div, form, input}
@@ -74,34 +73,43 @@ pub fn page(character: models.Character) -> html.Node(t) {
                 default: int.to_string(character.level),
                 type_: "number",
                 required: True,
-                additional_attrs: option.None,
+                additional_attrs: option.Some([attrs.Attr("step", "1")]),
               )),
               input.component(input.Props(
                 label: "Current XP",
                 name: "current_xp",
                 focus: False,
-                default: float.to_string(character.current_xp),
+                default: int.to_string(character.current_xp),
                 type_: "number",
                 required: True,
-                additional_attrs: option.None,
+                additional_attrs: option.Some([attrs.Attr("step", "1")]),
               )),
               input.component(input.Props(
-                label: "Extra XP Modifier",
+                label: "Extra XP Modifier (%)",
                 name: "extra_xp_modifier",
                 focus: False,
-                default: float.to_string(character.extra_xp_modifier),
+                default: int.to_string(character.extra_xp_modifier),
                 type_: "number",
                 required: True,
-                additional_attrs: option.Some([attrs.Attr("step", "0.01")]),
+                additional_attrs: option.Some([attrs.Attr("step", "1")]),
               )),
               input.component(input.Props(
                 label: "XP required to level",
                 name: "next_level_xp",
                 focus: False,
-                default: float.to_string(character.next_level_xp),
+                default: int.to_string(character.next_level_xp),
                 type_: "number",
                 required: True,
-                additional_attrs: option.None,
+                additional_attrs: option.Some([attrs.Attr("step", "1")]),
+              )),
+              input.component(input.Props(
+                label: "XP required for previous level",
+                name: "previous_level_xp",
+                focus: False,
+                default: int.to_string(character.next_level_xp),
+                type_: "number",
+                required: True,
+                additional_attrs: option.Some([attrs.Attr("step", "1")]),
               )),
               button.component(button.Props(
                 content: case character.id {

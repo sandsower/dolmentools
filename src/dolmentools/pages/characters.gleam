@@ -3,7 +3,7 @@ import dolmentools/components/character_card
 import dolmentools/models.{type Character}
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import nakai/html.{Text, button, div, h2_text, label, p_text}
+import nakai/html.{button, div, h2_text}
 import nakai/html/attrs.{class, id}
 
 pub fn render_characters(
@@ -19,7 +19,7 @@ pub fn render_characters(
         [
           id("characters"),
           class("w-full mt-4"),
-          attrs.Attr("hx-trigger", "refresh-characters from:body"), 
+          attrs.Attr("hx-trigger", "refresh-characters from:body"),
           attrs.Attr("hx-get", "/characters"),
           attrs.Attr("hx-target", "this"),
           attrs.Attr("hx-swap", "outerHTML"),
@@ -37,13 +37,13 @@ pub fn render_characters(
         [class("overflow-auto max-h-[80vh]"), id("characters")],
         chars
           |> list.map(fn(character) {
-            character_card.component(
-              character_card.Props(
-                variant: character_card.Manager(character),
-                attrs: [],
-              ),
-            )
-          }),
+          character_card.component(
+            character_card.Props(
+              variant: character_card.Manager(character),
+              attrs: [],
+            ),
+          )
+        }),
       ),
     ]
   }

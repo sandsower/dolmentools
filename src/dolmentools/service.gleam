@@ -3,7 +3,9 @@
 import dolmentools/models
 import formal/form
 import gleam/dict
+import gleam/float
 import gleam/function
+import gleam/int
 import gleam/io
 import gleam/list
 import gleam/string
@@ -23,14 +25,21 @@ pub fn calculate_xp_for_feat(
   models.Session(
     ..session,
     xp: session.xp
-      +. {
-        case feat.feat_type {
-          models.Minor -> session.required_xp *. feat_mod_minor
-          models.Major -> session.required_xp *. feat_mod_major
-          models.Extraordinary -> session.required_xp *. feat_mod_extraordinary
-          models.Campaign -> session.required_xp *. feat_mod_campaign
-          models.Custom -> feat.xp
+      + {
+        case
+          feat.feat_type,
+          session.required_xp
+          |> int.to_float
+        {
+          models.Minor, rxp -> rxp *. feat_mod_minor
+          models.Major, rxp -> rxp *. feat_mod_major
+          models.Extraordinary, rxp -> rxp *. feat_mod_extraordinary
+          models.Campaign, rxp -> rxp *. feat_mod_campaign
+          models.Custom, _ ->
+            feat.xp
+            |> int.to_float
         }
+        |> float.round
       },
   )
 }
@@ -56,15 +65,17 @@ pub fn end_session(
     session,
     session.characters
       |> list.map(fn(character) {
-      let xp_gained = session.xp *. { 1.0 +. character.extra_xp_modifier }
-      let total_xp = xp_gained +. character.current_xp
+      let modifier = int.to_float(character.extra_xp_modifier)
+      let xp_gained =
+        float.round(int.to_float(session.xp) *. { 1.0 +. modifier })
+      let total_xp = xp_gained + character.current_xp
       models.CharacterReport(
         id: 0,
         session: session,
         character: character,
         xp_gained: xp_gained,
         total_xp: total_xp,
-        level_up: total_xp >=. character.next_level_xp,
+        level_up: total_xp >= character.next_level_xp,
       )
     }),
   )
@@ -74,7 +85,7 @@ pub fn parse_character(
   values: List(#(String, String)),
 ) -> Result(models.Character, String) {
   let result =
-    form.decoding(curry7(models.Character))
+    form.decoding(curry8(models.Character))
     |> form.with_values(values)
     |> form.field(
       "id",
@@ -96,13 +107,18 @@ pub fn parse_character(
       form.int
         |> form.and(form.must_be_greater_int_than(0)),
     )
-    |> form.field("current_xp", form.float)
+    |> form.field("current_xp", form.int)
     |> form.field(
       "next_level_xp",
-      form.float
-        |> form.and(form.must_be_greater_float_than(0.0)),
+      form.int
+        |> form.and(form.must_be_greater_int_than(0)),
     )
-    |> form.field("extra_xp_modifier", form.float)
+    |> form.field(
+      "previous_level_xp",
+      form.int
+        |> form.and(form.must_be_greater_int_than(0)),
+    )
+    |> form.field("extra_xp_modifier", form.int)
     |> form.finish
 
   case result {
@@ -115,6 +131,7 @@ pub fn parse_character(
           level: data.level,
           current_xp: data.current_xp,
           next_level_xp: data.next_level_xp,
+          previous_level_xp: data.previous_level_xp,
           extra_xp_modifier: data.extra_xp_modifier,
         )
       Ok(character)
@@ -151,8 +168,8 @@ pub fn parse_feat(
         value
         |> string.is_empty
       {
-        True -> Ok(0.0)
-        False -> form.float(value)
+        True -> Ok(0)
+        False -> form.int(value)
       }
     })
     |> form.finish
@@ -184,10 +201,10 @@ pub fn parse_feat(
   }
 }
 
-pub fn curry7(fun: fn(a, b, c, d, e, f, g) -> value) {
+pub fn curry8(fun: fn(a, b, c, d, e, f, g, h) -> value) {
   fn(a) {
     fn(b) {
-      fn(c) { fn(d) { fn(e) { fn(f) { fn(g) { fun(a, b, c, d, e, f, g) } } } } }
+      fn(c) { fn(d) { fn(e) { fn(f) { fn(g) { fn(h) { fun(a, b, c, d, e, f, g, h) } } } } } }
     }
   }
 }
